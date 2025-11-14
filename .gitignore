@@ -1,10 +1,79 @@
-# Python-generated files
+node_modules/
+
+# Python
 __pycache__/
-*.py[oc]
-build/
-dist/
-wheels/
-*.egg-info
+*.py[cod]
+*$py.class
+*.so
 
 # Virtual environments
-.venv
+.env
+.venv/
+env/
+venv/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# CIE-specific application files
+cie.log
+optimization_results.json
+trial_history.json
+*.artifact
+
+# Test and coverage
+.pytest_cache/
+.coverage
+htmlcov/
+coverage/
+
+# Cache directories
+.cache/
+.textual_cache/
+.ruff_cache/
+
+# Project-specific tools
+.crush/
+.jj/
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.backup
+*.old
+
+# Database files (if persistence is added)
+*.db
+*.sqlite
+*.sqlite3
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+
+# Documentation screenshots (when added)
+docs/screenshots/*.png
+docs/screenshots/*.jpg
+docs/screenshots/*.gif
+
+# Environment files
+.env.local
+.env.production
+
+# Custom CIE development files
+# Add any project-specific files that should not be tracked

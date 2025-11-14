@@ -1,107 +1,65 @@
-"""
-Tests for CIE backend functionality.
+"""Backend regression tests for the packaged CIE implementation."""
 
-This is a placeholder test file. Add actual tests as the project develops.
-"""
-
-import pytest
-from main import CIEBackend, Policy, Trial
+from cie.config.settings import CIEConfig, set_config
+from cie.core.backend import CIEBackend
 
 
-class TestCIEBackend:
-    """Test cases for CIEBackend class."""
-    
-    def setup_method(self):
-        """Set up test fixtures."""
-        self.backend = CIEBackend()
-    
-    def test_backend_initialization(self):
-        """Test that backend initializes correctly."""
-        assert self.backend.objective_weights is not None
-        assert len(self.backend.optimizers) == 3  # MockDspy, HillClimb, Bandit
-        assert len(self.backend.workloads) == 3
-        assert self.backend.evaluator is not None
-        assert self.backend.trials == []
-        assert self.backend.pareto == []
-        assert self.backend.active_policy is None
-    
-    def test_default_objective_weights(self):
-        """Test default objective weights configuration."""
-        expected_keys = ["latency_p95", "cost_per_req", "task_success", "context_usage", "tool_error_rate"]
-        assert all(key in self.backend.objective_weights for key in expected_keys)
-    
-    def test_score_calculation(self):
-        """Test scoring function with sample metrics."""
-        metrics = {
-            "latency_p95": 200.0,
-            "cost_per_req": 0.005,
-            "task_success": 0.9,
-            "context_usage": 0.7,
-            "tool_error_rate": 0.02
+def make_backend() -> CIEBackend:
+    """Construct a backend wired for tests."""
+    config = CIEConfig()
+    config.storage.backend = "memory"
+    config.model.provider = "mock"
+    config.model.model_name = "mock-model"
+    config.evaluation.default_evaluator = "mock"
+    set_config(config)
+    return CIEBackend(config)
+
+
+def test_backend_initialization():
+    backend = make_backend()
+    try:
+        assert backend.optimizers, "Expected at least one optimizer"
+        assert backend.workloads and len(backend.workloads) >= 3
+        assert backend.evaluator is not None
+        assert backend.evaluator_slug == backend.config.evaluation.default_evaluator
+        assert backend.trials == []
+        assert backend.pareto == []
+    finally:
+        backend.close()
+
+
+def test_score_respects_metric_weights():
+    backend = make_backend()
+    try:
+        backend.config.evaluation.metric_weights = {
+            "latency_p95": 1.0,
+            "task_success": -2.0,
         }
-        
-        score = self.backend.score(metrics)
-        assert isinstance(score, float)
-        assert score != 0.0  # Should calculate non-zero score
-    
-    def test_score_with_missing_metrics(self):
-        """Test scoring function with incomplete metrics."""
-        metrics = {
-            "latency_p95": 200.0,
-            "task_success": 0.9,
-        }
-        
-        score = self.backend.score(metrics)
-        assert isinstance(score, float)
-        # Missing metrics should default to 0.0
-    
-    def test_list_optimizers(self):
-        """Test optimizer listing functionality."""
-        optimizers = self.backend.list_optimizers()
-        assert len(optimizers) == 3
-        
-        names = [name for name, _ in optimizers]
-        expected_names = ["DSPy:BootstrapFewShot", "HillClimb", "TwoArmBandit"]
-        assert all(name in names for name in expected_names)
+        fast_successful = {"latency_p95": 100.0, "task_success": 0.95}
+        slow_failed = {"latency_p95": 500.0, "task_success": 0.20}
+        assert backend.score(fast_successful) < backend.score(slow_failed)
+    finally:
+        backend.close()
 
 
-class TestPolicy:
-    """Test cases for Policy dataclass."""
-    
-    def test_policy_creation(self):
-        """Test Policy object creation."""
-        policy = Policy(
-            name="TestPolicy",
-            params={"param1": "value1", "param2": 42},
-            actions=["action1", "action2"]
-        )
-        
-        assert policy.name == "TestPolicy"
-        assert policy.params["param1"] == "value1"
-        assert policy.params["param2"] == 42
-        assert len(policy.actions) == 2
+def test_policy_proposal_and_evaluation_updates_state():
+    backend = make_backend()
+    try:
+        policy = backend.propose_once(0)
+        trial = backend.eval_policy(policy, 0)
+        assert backend.trials[-1].id == trial.id
+        assert backend.pareto  # at least one point after eval
+        stats = backend.get_stats()
+        assert stats["trial_count"] >= 1
+        assert stats["optimizer_count"] == len(backend.optimizers)
+    finally:
+        backend.close()
 
 
-class TestTrial:
-    """Test cases for Trial dataclass."""
-    
-    def test_trial_creation(self):
-        """Test Trial object creation."""
-        trial = Trial(
-            id=1,
-            policy_name="TestPolicy",
-            metrics={"latency_p95": 200.0, "success": 0.9},
-            score=0.75,
-            artifact_id="test-artifact",
-            notes="Test trial"
-        )
-        
-        assert trial.id == 1
-        assert trial.policy_name == "TestPolicy"
-        assert trial.score == 0.75
-        assert trial.artifact_id == "test-artifact"
-        assert trial.notes == "Test trial"
-
-
-# Mark these tests as placeholders until full implementation
-pytestmark = pytest.mark.skip(reason="Test infrastructure placeholder - implement when ready")
+def test_stats_report_active_evaluator():
+    backend = make_backend()
+    try:
+        stats = backend.get_stats()
+        assert stats.get("evaluator") == "mock"
+    finally:
+        backend.close()

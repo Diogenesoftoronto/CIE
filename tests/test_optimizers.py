@@ -1,106 +1,50 @@
-"""
-Tests for optimizer implementations.
+"""Unit tests for the shipped optimizer implementations."""
 
-This is a placeholder test file. Add actual tests as real implementations are added.
-"""
-
-import pytest
-from main import MockDspyOptimizer, MockHillClimb, MockBandit
+from cie.config.settings import CIEConfig, set_config
+from cie.optimizers.dspy_optimizer import DSPyOptimizer
+from cie.optimizers.hill_climb import HillClimbOptimizer
 
 
-class TestMockDspyOptimizer:
-    """Test cases for MockDspyOptimizer."""
-    
-    def setup_method(self):
-        """Set up test fixtures."""
-        self.optimizer = MockDspyOptimizer(k_shots=8, model="gpt-4.1-mini")
-    
-    def test_initialization(self):
-        """Test optimizer initialization."""
-        assert self.optimizer.name == "DSPy:BootstrapFewShot"
-        assert self.optimizer.k_shots == 8
-        assert self.optimizer.model == "gpt-4.1-mini"
-        assert self.optimizer.best_score is None
-        assert self.optimizer.best_artifact is None
-    
-    def test_propose_policy(self):
-        """Test policy proposal."""
-        state = {"some_state": "value"}
-        policy = self.optimizer.propose(state)
-        
-        assert policy.name == "DSPy:BootstrapFewShot"
-        assert "artifact" in policy.params
-        assert "k_shots" in policy.params
-        assert policy.params["k_shots"] == 8
-        assert len(policy.actions) > 0
-    
-    def test_observe_method(self):
-        """Test observe method (should not crash)."""
-        from main import Policy
-        
-        policy = Policy("test", {}, [])
-        metrics = {"latency_p95": 200.0, "task_success": 0.9}
-        
-        # Should not raise an exception
-        self.optimizer.observe(policy, metrics)
+def configure_mock_environment() -> None:
+    """Ensure optimizers see the mock model provider via global config."""
+    config = CIEConfig()
+    config.model.provider = "mock"
+    config.model.model_name = "mock-model"
+    set_config(config)
 
 
-class TestMockHillClimb:
-    """Test cases for MockHillClimb optimizer."""
-    
-    def setup_method(self):
-        """Set up test fixtures."""
-        self.optimizer = MockHillClimb()
-    
-    def test_initialization(self):
-        """Test optimizer initialization."""
-        assert self.optimizer.name == "HillClimb"
-    
-    def test_propose_policy(self):
-        """Test policy proposal."""
-        state = {"some_state": "value"}
-        policy = self.optimizer.propose(state)
-        
-        assert policy.name == "HillClimb"
-        assert "prune_ratio" in policy.params
-        assert "batch_size" in policy.params
-        assert len(policy.actions) == 2
-    
-    def test_parameter_ranges(self):
-        """Test that parameters are in expected ranges."""
-        state = {}
-        
-        # Test multiple proposals to check randomness
-        for _ in range(10):
-            policy = self.optimizer.propose(state)
-            prune_ratio = policy.params["prune_ratio"]
-            batch_size = policy.params["batch_size"]
-            
-            assert 0.0 <= prune_ratio <= 0.6
-            assert batch_size in [2, 4, 8, 12, 16]
+def test_dspy_optimizer_propose_and_observe():
+    configure_mock_environment()
+    optimizer = DSPyOptimizer(k_shots=2, model="mock-model")
+
+    policy = optimizer.propose(state={"trials": []})
+    assert policy.name == "DSPy:BootstrapFewShot"
+    assert policy.params["k_shots"] == 2
+    assert "artifact" in policy.params
+    assert policy.metadata["engine"] in {"dspy", "prompt"}
+
+    metrics = {"latency_p95": 150.0, "cost_per_req": 0.001, "task_success": 0.92}
+    optimizer.observe(policy, metrics)
+    state = optimizer.get_state()
+    assert state["trial_count"] == 1
+    assert state["best_score"] is not None
 
 
-class TestMockBandit:
-    """Test cases for MockBandit optimizer."""
-    
-    def setup_method(self):
-        """Set up test fixtures."""
-        self.optimizer = MockBandit()
-    
-    def test_initialization(self):
-        """Test optimizer initialization."""
-        assert self.optimizer.name == "TwoArmBandit"
-    
-    def test_propose_policy(self):
-        """Test policy proposal."""
-        state = {"some_state": "value"}
-        policy = self.optimizer.propose(state)
-        
-        assert policy.name == "TwoArmBandit"
-        assert "arm" in policy.params
-        assert policy.params["arm"] in ["A", "B"]
-        assert len(policy.actions) == 1
+def test_hill_climb_optimizer_parameter_ranges():
+    optimizer = HillClimbOptimizer(step_size=0.2)
+    policy = optimizer.propose(state={})
+    assert policy.name == "HillClimb"
+    assert 0.0 <= policy.params["prune_ratio"] <= 0.8
+    assert 1 <= policy.params["batch_size"] <= 32
+    assert isinstance(policy.actions, list) and policy.actions
 
 
-# Mark these tests as placeholders until full implementation
-pytestmark = pytest.mark.skip(reason="Mock optimizer tests - implement real optimizer tests when ready")
+def test_hill_climb_optimizer_observe_updates_state():
+    optimizer = HillClimbOptimizer(step_size=0.1, max_stagnation=4)
+    policy = optimizer.propose(state={})
+    metrics = {"latency_p95": 200.0, "cost_per_req": 0.001, "task_success": 0.85}
+    optimizer.observe(policy, metrics)
+
+    state = optimizer.get_state()
+    assert state["trial_count"] == 1
+    assert state["best_score"] is not None

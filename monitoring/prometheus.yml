@@ -1,0 +1,43 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+rule_files:
+  - "rules/*.yml"
+
+scrape_configs:
+  # Prometheus self-monitoring
+  - job_name: 'prometheus'
+    static_configs:
+      - targets: ['localhost:9090']
+
+  # CIE application metrics (if implemented)
+  - job_name: 'cie-app'
+    static_configs:
+      - targets: ['cie-prod:8080']
+    scrape_interval: 30s
+    metrics_path: /metrics
+    params:
+      format: ['prometheus']
+
+  # Node exporter for system metrics (if available)
+  - job_name: 'node'
+    static_configs:
+      - targets: ['node-exporter:9100']
+
+  # Docker container metrics (if cAdvisor is available)
+  - job_name: 'cadvisor'
+    static_configs:
+      - targets: ['cadvisor:8080']
+    metrics_path: /metrics
+
+# Alerting configuration
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+          - alertmanager:9093
+
+# Recording rules for CIE-specific metrics
+rule_files:
+  - "cie_rules.yml"

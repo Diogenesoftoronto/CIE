@@ -1,0 +1,205 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+  release:
+    types: [ published ]
+
+env:
+  DAGGER_VERSION: 0.9.3
+  PYTHON_VERSION: "3.13"
+
+jobs:
+  quality-checks:
+    name: Code Quality Checks
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Dagger
+        uses: dagger/dagger-for-github@v5
+        with:
+          version: ${{ env.DAGGER_VERSION }}
+          verb: call
+          args: quality-gate --source=.
+
+  test:
+    name: Test Suite
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.13"]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Dagger
+        uses: dagger/dagger-for-github@v5
+        with:
+          version: ${{ env.DAGGER_VERSION }}
+          verb: call
+          args: test --coverage=true --source=.
+
+      - name: Upload coverage reports
+        uses: codecov/codecov-action@v3
+        with:
+          file: ./coverage.xml
+          flags: unittests
+          name: codecov-umbrella
+
+  security:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Dagger
+        uses: dagger/dagger-for-github@v5
+        with:
+          version: ${{ env.DAGGER_VERSION }}
+          verb: call
+          args: security-scan --source=.
+
+  build:
+    name: Build Package
+    runs-on: ubuntu-latest
+    needs: [quality-checks, test]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Dagger
+        uses: dagger/dagger-for-github@v5
+        with:
+          version: ${{ env.DAGGER_VERSION }}
+          verb: call
+          args: build --source=.
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: python-package
+          path: dist/
+
+  docs:
+    name: Generate Documentation
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Dagger
+        uses: dagger/dagger-for-github@v5
+        with:
+          version: ${{ env.DAGGER_VERSION }}
+          verb: call
+          args: docs --source=.
+
+      - name: Upload documentation
+        uses: actions/upload-artifact@v4
+        with:
+          name: documentation
+          path: docs/
+
+  deploy-dev:
+    name: Deploy to Development
+    runs-on: ubuntu-latest
+    needs: [quality-checks, test, build]
+    if: github.ref == 'refs/heads/develop'
+    environment: development
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Dagger
+        uses: dagger/dagger-for-github@v5
+        with:
+          version: ${{ env.DAGGER_VERSION }}
+          verb: call
+          args: deploy-dev --source=.
+
+  deploy-prod:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: [quality-checks, test, build, security]
+    if: github.event_name == 'release'
+    environment: production
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Login to Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Setup Dagger
+        uses: dagger/dagger-for-github@v5
+        with:
+          version: ${{ env.DAGGER_VERSION }}
+          verb: call
+          args: deploy-prod --source=. --registry=ghcr.io --image-tag=${{ github.ref_name }}
+
+  complete-ci:
+    name: Complete CI Pipeline
+    runs-on: ubuntu-latest
+    needs: [quality-checks, test, security, build, docs]
+    if: always()
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Dagger
+        uses: dagger/dagger-for-github@v5
+        with:
+          version: ${{ env.DAGGER_VERSION }}
+          verb: call
+          args: ci --source=.
+
+      - name: CI Status
+        run: |
+          if [ "${{ needs.quality-checks.result }}" == "success" ] && \
+             [ "${{ needs.test.result }}" == "success" ] && \
+             [ "${{ needs.security.result }}" == "success" ] && \
+             [ "${{ needs.build.result }}" == "success" ]; then
+            echo "✅ All CI checks passed!"
+            exit 0
+          else
+            echo "❌ Some CI checks failed"
+            exit 1
+          fi
+
+  notify:
+    name: Notify Results
+    runs-on: ubuntu-latest
+    needs: [complete-ci]
+    if: always()
+    steps:
+      - name: Notify Slack
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          channel: '#ci-cd'
+          webhook_url: ${{ secrets.SLACK_WEBHOOK }}
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
+        continue-on-error: true
+
+      - name: Notify Discord
+        uses: Ilshidur/action-discord@master
+        with:
+          args: |
+            🚀 CIE CI/CD Pipeline Status: ${{ job.status }}
+            📊 Branch: ${{ github.ref }}
+            🔗 Commit: ${{ github.sha }}
+            👤 Author: ${{ github.actor }}
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        continue-on-error: true

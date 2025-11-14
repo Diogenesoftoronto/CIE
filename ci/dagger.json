@@ -1,0 +1,6 @@
+{
+  "name": "cie-ci",
+  "sdk": "python",
+  "source": ".",
+  "engineVersion": "v0.9.3"
+}

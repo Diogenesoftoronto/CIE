@@ -1,0 +1,83 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --distill-blue: #3b82f6;
+  --distill-orange: #f59e0b;
+  --distill-green: #10b981;
+  --distill-purple: #8b5cf6;
+}
+
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  line-height: 1.6;
+  color: #334155;
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+  min-height: 100vh;
+}
+
+.distill-gradient {
+  background: linear-gradient(135deg, var(--distill-blue) 0%, var(--distill-purple) 100%);
+}
+
+.distill-card {
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.distill-hover {
+  transition: all 0.3s ease;
+}
+
+.distill-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+.math-formula {
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 1.1em;
+  color: #0f172a;
+}
+
+.code-block {
+  background: #0f172a;
+  color: #f8fafc;
+  border-radius: 8px;
+  padding: 1.5rem;
+  overflow-x: auto;
+  font-family: 'JetBrains Mono', Monaco, Consolas, monospace;
+  font-size: 0.9em;
+  line-height: 1.5;
+}
+
+.interactive-demo {
+  border: 2px solid var(--distill-blue);
+  border-radius: 12px;
+  padding: 2rem;
+  background: rgba(59, 130, 246, 0.05);
+  margin: 2rem 0;
+}
+
+.section-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #cbd5e1, transparent);
+  margin: 4rem 0;
+}
+
+.citation {
+  color: #64748b;
+  font-size: 0.9em;
+  text-decoration: none;
+  border-bottom: 1px dotted #cbd5e1;
+}
+
+.citation:hover {
+  color: var(--distill-blue);
+  border-bottom-color: var(--distill-blue);
+}

@@ -1,0 +1,171 @@
+version: '3.8'
+
+services:
+  # Development environment
+  cie-dev:
+    build:
+      context: .
+      target: development
+    container_name: cie-development
+    volumes:
+      - .:/app
+      - cie-data:/home/cie/.cie
+    environment:
+      - PYTHONPATH=/app
+      - CIE_CONFIG_DIR=/home/cie/.cie
+      - CIE_EXPERIMENTS_DIR=/home/cie/.cie/experiments
+      - KIMI_API_KEY=${KIMI_API_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    ports:
+      - "8080:8080"  # For potential web interface
+    stdin_open: true
+    tty: true
+    command: bash
+    networks:
+      - cie-network
+
+  # Production environment
+  cie-prod:
+    build:
+      context: .
+      target: production
+    container_name: cie-production
+    volumes:
+      - cie-data:/home/cie/.cie
+    environment:
+      - CIE_CONFIG_DIR=/home/cie/.cie
+      - CIE_EXPERIMENTS_DIR=/home/cie/.cie/experiments
+      - KIMI_API_KEY=${KIMI_API_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    ports:
+      - "8081:8080"
+    stdin_open: true
+    tty: true
+    restart: unless-stopped
+    networks:
+      - cie-network
+
+  # Testing environment
+  cie-test:
+    build:
+      context: .
+      target: development
+    container_name: cie-testing
+    volumes:
+      - .:/app
+      - cie-test-data:/home/cie/.cie
+    environment:
+      - PYTHONPATH=/app
+      - CIE_CONFIG_DIR=/home/cie/.cie
+      - CIE_EXPERIMENTS_DIR=/home/cie/.cie/experiments
+      - PYTEST_CURRENT_TEST=1
+    command: >
+      bash -c "
+        echo '🧪 Running tests...' &&
+        pytest tests/ -v --cov=cie --cov-report=term-missing --cov-report=html &&
+        echo '✅ Tests completed'
+      "
+    networks:
+      - cie-network
+
+  # Documentation server
+  cie-docs:
+    build:
+      context: .
+      target: development
+    container_name: cie-documentation
+    volumes:
+      - .:/app
+      - cie-docs:/home/cie/.cie
+    environment:
+      - PYTHONPATH=/app
+    ports:
+      - "8082:8080"
+    command: >
+      bash -c "
+        echo '📚 Starting documentation server...' &&
+        pdoc cie/ --http-host 0.0.0.0 --http-port 8080
+      "
+    networks:
+      - cie-network
+
+  # Database for production (optional)
+  postgres:
+    image: postgres:15-alpine
+    container_name: cie-postgres
+    environment:
+      - POSTGRES_DB=cie
+      - POSTGRES_USER=cie
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-cie_password}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - cie-network
+    profiles:
+      - database
+
+  # Redis for caching (optional)
+  redis:
+    image: redis:7-alpine
+    container_name: cie-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - cie-network
+    profiles:
+      - cache
+
+  # Monitoring with Prometheus (optional)
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: cie-prometheus
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheus-data:/prometheus
+    networks:
+      - cie-network
+    profiles:
+      - monitoring
+
+  # Grafana for visualization (optional)
+  grafana:
+    image: grafana/grafana:latest
+    container_name: cie-grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=${GRAFANA_PASSWORD:-admin}
+    volumes:
+      - grafana-data:/var/lib/grafana
+      - ./monitoring/grafana/dashboards:/etc/grafana/provisioning/dashboards
+      - ./monitoring/grafana/datasources:/etc/grafana/provisioning/datasources
+    networks:
+      - cie-network
+    profiles:
+      - monitoring
+
+volumes:
+  cie-data:
+    driver: local
+  cie-test-data:
+    driver: local
+  cie-docs:
+    driver: local
+  postgres-data:
+    driver: local
+  redis-data:
+    driver: local
+  prometheus-data:
+    driver: local
+  grafana-data:
+    driver: local
+
+networks:
+  cie-network:
+    driver: bridge

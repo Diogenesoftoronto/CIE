@@ -195,8 +195,30 @@ This may include:
 
 ## 7. Development Roadmap
 
-* **Trial Details Panel**
-  Inspect full metrics, action diffs, artifact dumps.
+- **Hallucination & Consistency Detectors**
+  - Built-in evaluator modules that score hallucination risk, response consistency, and citation fidelity per trial.
+  - Guardrail hooks so adoption can be blocked if hallucination metrics exceed thresholds.
+
+- **Dataset & Workload Registry**
+  - `cie datasets` CLI for importing, versioning, and describing datasets (YAML/JSON).
+  - Workload definitions pointing to dataset subsets so agents can reproduce evaluation suites.
+
+- **Recursive Language Model (RLM) Context Management**
+  - Agent-accessible `StateStore` for arbitrary variables and context budgets.
+  - Recursive Manager that lets optimizers spawn sub-policies, persist intermediate summaries, and manage context windows.
+  - Oversight agent channel (human or automated) to inspect recursion stacks and veto policies.
+
+- **Agent Code Environment**
+  - Embedded sandbox for executing helper scripts/snippets that can read/write state, summarize context, or generate new workloads.
+  - TUI “Code” panel and CLI commands (`cie code run`) to execute analysis routines alongside evaluations.
+
+- **Fast MCP Integration**
+  - `cie serve mcp` exposes state, workload, evaluation, and code APIs over the Model Context Protocol so external agents can orchestrate CIE remotely.
+  - Enables recursive/oversight agents to run CIE as a service within larger agentic systems.
+
+- **Provider & Tool Ecosystem**
+  - Support for local/vLLM/OpenRouter providers to reduce dependence on a single API.
+  - Tool adapters (retrievers, vector DBs, structured actions) surfaced through the state manager so policies can reason about available resources.
 
 * **Objective Profiles**
   One-keystroke presets: *Speed*, *Quality*, *Budget*, *Hybrid*.
@@ -235,4 +257,3 @@ Free for research, experimentation, and extension.
 
 > *“An agent with visibility into its own substrate becomes something more than a model —
 > it becomes a system.”*
-

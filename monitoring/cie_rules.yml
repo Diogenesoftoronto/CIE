@@ -1,0 +1,69 @@
+groups:
+  - name: cie_performance
+    rules:
+      - alert: CIEHighErrorRate
+        expr: cie_error_rate > 0.05
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "CIE error rate is high"
+          description: "CIE error rate is {{ $value }}% for more than 5 minutes"
+
+      - alert: CIELowSuccessRate
+        expr: cie_success_rate < 0.8
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "CIE success rate is low"
+          description: "CIE success rate is {{ $value }}% for more than 5 minutes"
+
+      - alert: CIEHighLatency
+        expr: cie_latency_p95 > 5000
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "CIE P95 latency is high"
+          description: "CIE P95 latency is {{ $value }}ms for more than 5 minutes"
+
+  - name: cie_resources
+    rules:
+      - alert: CIEHighMemoryUsage
+        expr: cie_memory_usage > 0.9
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "CIE memory usage is high"
+          description: "CIE memory usage is {{ $value }}% for more than 5 minutes"
+
+      - alert: CIEHighCPUUsage
+        expr: cie_cpu_usage > 0.9
+        for: 5m
+        labels:
+          severity: warning
+        annotations:
+          summary: "CIE CPU usage is high"
+          description: "CIE CPU usage is {{ $value }}% for more than 5 minutes"
+
+  - name: cie_optimization
+    rules:
+      - alert: CIEStagnantOptimization
+        expr: increase(cie_iterations_total[1h]) < 1
+        for: 1h
+        labels:
+          severity: info
+        annotations:
+          summary: "CIE optimization appears stagnant"
+          description: "No new optimization iterations in the last hour"
+
+      - alert: CIEPoorOptimizationProgress
+        expr: cie_best_score_improvement < 0.01
+        for: 30m
+        labels:
+          severity: info
+        annotations:
+          summary: "CIE optimization progress is slow"
+          description: "Score improvement is less than 1% in the last 30 minutes"
