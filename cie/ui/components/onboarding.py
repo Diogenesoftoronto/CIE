@@ -124,9 +124,9 @@ Features:
 • Create views of important data
 • Navigate context like a filesystem
 
-Use Ctrl+/ to open the context navigator.""",
-                "show_context_navigator",
-                "Open Context Tools",
+Use Ctrl+/ to open the dedicated context modal or select the [CTX] tab.""",
+                "focus_context",
+                "View Context Panel",
             ),
             OnboardingStep(
                 "Keyboard Shortcuts",
@@ -254,7 +254,12 @@ Happy optimizing!""",
         if step.action:
             # Execute action on app
             if hasattr(self.app, f"action_{step.action}"):
-                getattr(self.app, f"action_{step.action}")()
+                # Some actions live on the app, others (like focus helpers) on panels
+                handler = getattr(self.app, f"action_{step.action}", None)
+                if callable(handler):
+                    handler()
+                elif hasattr(self.app, step.action):
+                    getattr(self.app, step.action)()
 
     def action_skip(self) -> None:
         """Skip the tour."""

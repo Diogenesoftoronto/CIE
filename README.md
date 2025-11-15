@@ -16,6 +16,10 @@ A modern Python TUI (Terminal User Interface) application for running optimizati
 - **Extensible Architecture**: Plugin-based design for easy extension
 - **Design System**: Shared Textual theme (`cie/ui/theme.tcss`) that keeps the entire TUI visually coherent
 - **Evaluator Registry**: Built-in mock/text-match evaluators plus a plugin API for custom scoring flows
+- **Context Introspection Workspace**: `[CTX]` tab and modal navigator to capture, reorganize, and export live agent context
+- **W&B Beta LEET Ingestion**: Import `wandb/latest-run` locally with a single shortcut to visualize real Run metrics inside the Experiments dashboard
+- **Demo Mode**: `cie tui --demo` loads a guided LeetCode practice lab with seeded workloads/trials/context hints
+- **Benchmark Harness**: Ready-to-run benchmarking suite under `benchmark/` with CLI runner + research-ready metrics
 
 ## 📦 Installation
 
@@ -101,7 +105,12 @@ CIE uses a JSON configuration file located at `~/.cie/config.json`:
 ```bash
 # Start the TUI application
 cie tui
+
+# Explore demo mode (seeds LeetCode-style workloads/trials)
+cie tui --demo
 ```
+
+> Tip: set `CIE_WANDB_RUN=/path/to/wandb/run` (defaults to `./wandb/latest-run`) before launching so the Experiments panel can import real LEET metrics with `Ctrl+Shift+W`.
 
 Key shortcuts in TUI:
 - `Tab`/`Shift+Tab`: Navigate between panels
@@ -109,8 +118,10 @@ Key shortcuts in TUI:
 - `E`: Run evaluation (in Evaluations panel)
 - `P`: Toggle Pareto view (in Experiments panel)
 - `A`: Adopt best policy (in Experiments panel)
+- `Shift+S`: Sync latest W&B run (Experiments panel)
 - `Ctrl+W`: Edit objective weights
 - `Ctrl+O`: Edit configuration
+- `Ctrl+Shift+W`: Global shortcut to sync W&B metrics
 - `F1`: Show help
 
 ### CLI Interface
@@ -141,6 +152,14 @@ cie workloads
 cie evaluators
 cie evaluators --use text-match
 ```
+
+## 🔄 Syncing Weights & Biases Runs
+
+1. Ensure a local W&B run directory exists (default: `./wandb/latest-run`). Override via `export CIE_WANDB_RUN=/absolute/path/to/run`.
+2. Launch the TUI and open the Experiments panel.
+3. Click the “Sync W&B” toolbar button, press `Shift+S`, or use the global shortcut `Ctrl+Shift+W`.
+4. Imported trials are tagged with `metadata.source == "wandb"` so subsequent syncs skip duplicates. Metric cards, sparklines, and the Pareto table refresh automatically.
+5. Programmatic usage: `backend.ingest_wandb_run(path)` in `cie/core/backend.py` relies on the helpers in `cie/utils/wandb_import.py`.
 
 ## 🧪 Optimization Algorithms
 
@@ -203,6 +222,13 @@ CIE automatically identifies the Pareto frontier - the set of non-dominated solu
 - **Pros**: Fastest, no persistence
 - **Cons**: Data lost on restart
 - **Use case**: Testing, temporary experiments
+
+## 📐 Benchmarks & Research Drafts
+
+- **Benchmark Harness**: `benchmark/runner.py` executes the mixed-workload suites (MicroEval, MacroEval, TextEval, context exercises). Run via `uv run python benchmark/runner.py` or integrate with CI.
+- **Documentation**: `BENCHMARK_GUIDE.md`, `BENCHMARK_OVERVIEW.md`, and `benchmark/SYSTEM_SUMMARY.md` capture methodology, scoring, and current results.
+- **Demo Scenario**: `cie tui --demo` mirrors the benchmarking inputs (seeded LeetCode workloads/trials) for narrative walkthroughs.
+- **Research Draft**: Early paper drafts live under `papers/` and summarize the full architecture, benchmarking philosophy, and context-introspection innovations.
 
 ## 🔌 Model Providers
 
@@ -396,6 +422,9 @@ git clone https://github.com/cie-team/cie.git
 cd cie
 pip install -e ".[dev]"
 pre-commit install
+
+# Refresh paper assets after UI changes
+python scripts/generate_tui_screenshots.py
 ```
 
 ### Code Style

@@ -1,13 +1,16 @@
 import React, { useState } from 'react'
-import { BarChart3, TrendingUp, Target, Clock, DollarSign, CheckCircle, XCircle, Activity } from 'lucide-react'
+import { BarChart3, TrendingUp, Target, Clock, DollarSign, XCircle, Activity, Brain, Search, FileText } from 'lucide-react'
 
 const Evaluation: React.FC = () => {
   const [selectedWorkload, setSelectedWorkload] = useState('classification')
-  const [evaluationResults, setEvaluationResults] = useState({
+  const [evaluationResults] = useState({
     latency: { current: 0.45, baseline: 0.62, improvement: 27.4 },
     cost: { current: 0.023, baseline: 0.031, improvement: 25.8 },
     accuracy: { current: 0.94, baseline: 0.89, improvement: 5.6 },
-    error_rate: { current: 0.02, baseline: 0.08, improvement: 75.0 }
+    error_rate: { current: 0.02, baseline: 0.08, improvement: 75.0 },
+    context_efficiency: { current: 0.87, baseline: 0.65, improvement: 33.8 },
+    compression_ratio: { current: 0.68, baseline: 0.0, improvement: 68.0 },
+    text_similarity: { current: 0.92, baseline: 0.85, improvement: 8.2 }
   })
 
   const workloads = [
@@ -16,14 +19,14 @@ const Evaluation: React.FC = () => {
       name: 'Text Classification',
       description: 'Multi-class text classification with varying complexity',
       items: 1000,
-      metrics: ['accuracy', 'precision', 'recall', 'f1_score']
+      metrics: ['accuracy', 'precision', 'recall', 'f1_score', 'text_similarity']
     },
     {
       id: 'generation',
       name: 'Text Generation',
       description: 'Long-form text generation with quality evaluation',
       items: 500,
-      metrics: ['bleu_score', 'rouge_score', 'perplexity', 'coherence']
+      metrics: ['bleu_score', 'rouge_score', 'perplexity', 'coherence', 'text_similarity']
     },
     {
       id: 'reasoning',
@@ -31,6 +34,13 @@ const Evaluation: React.FC = () => {
       description: 'Multi-step reasoning and problem solving',
       items: 200,
       metrics: ['accuracy', 'step_coverage', 'logical_consistency']
+    },
+    {
+      id: 'context-analysis',
+      name: 'Context Analysis',
+      description: 'Context introspection and optimization evaluation',
+      items: 150,
+      metrics: ['context_efficiency', 'compression_ratio', 'access_pattern_efficiency']
     }
   ]
 
@@ -70,6 +80,33 @@ const Evaluation: React.FC = () => {
       unit: '%',
       lower_is_better: true,
       description: 'Percentage of failed operations'
+    },
+    {
+      key: 'context_efficiency',
+      name: 'Context Efficiency',
+      icon: Brain,
+      color: 'indigo',
+      unit: '%',
+      lower_is_better: false,
+      description: 'Context organization and access efficiency'
+    },
+    {
+      key: 'compression_ratio',
+      name: 'Compression Ratio',
+      icon: Search,
+      color: 'emerald',
+      unit: '%',
+      lower_is_better: false,
+      description: 'Context size reduction while preserving information'
+    },
+    {
+      key: 'text_similarity',
+      name: 'Text Similarity',
+      icon: FileText,
+      color: 'orange',
+      unit: '%',
+      lower_is_better: false,
+      description: 'Similarity between generated and reference text'
     }
   ]
 
@@ -83,8 +120,9 @@ const Evaluation: React.FC = () => {
             Comprehensive Evaluation
           </h2>
           <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
-            Multi-dimensional evaluation across different workloads and metrics. 
-            Compare optimized policies against baselines with detailed performance analysis.
+            Multi-dimensional evaluation including advanced context introspection metrics. 
+            Compare optimized policies against baselines with detailed performance analysis 
+            across traditional and context-aware dimensions.
           </p>
         </div>
 

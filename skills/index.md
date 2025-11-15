@@ -18,6 +18,30 @@ Explains the evaluator abstraction layer shipped in `cie/evaluators/`, including
 - How to build Braintrust-style evaluation cases that leverage real model providers
 - CLI workflows (`cie evaluators`, `cie evaluators --use text-match`) and configuration tips
 
+### [Typst Authoring Guide](typst.md)
+Reference for editing `papers/cie-paper.typ`: figure/table patterns, asset management in `papers/assets/`, and reproducible chart generation scripts.
+
+### [Web Development Guide](web.md)
+Documentation for the `site/` directory, covering the React/Vite/Tailwind stack, Bun usage, and key components.
+
+### [Benchmarking Guide](benchmarking.md)
+Comprehensive guide to the CIE Agent Benchmark System, including running benchmarks, understanding tasks, and analyzing metrics.
+
+### [CLI Guide](cli.md)
+Setup and usage guide for the CIE Command Line Interface.
+
+### [Self-Optimization Guide](self_optimization.md)
+Guide to the Agent Self-Optimization Framework, including scenarios, API usage, and measurement.
+
+### [Vision](vision.md)
+High-level vision and goals for the Context Introspection Environment.
+
+### [CI/CD Pipeline](ci_cd.md)
+Documentation for the Continuous Integration and Deployment pipeline.
+
+### [Testing Guide](testing.md)
+Overview of the testing infrastructure, categories, and best practices.
+
 ## Quick Reference
 
 ### Project Architecture

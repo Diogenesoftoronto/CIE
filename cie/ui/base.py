@@ -2,17 +2,17 @@
 Base UI components for CIE.
 """
 
-from typing import Callable
+from collections.abc import Callable
 
-from textual import events
+from textual.app import ComposeResult
 from textual.containers import Horizontal, Vertical
 from textual.message import Message
 from textual.reactive import reactive
-from textual.widgets import Label, Static
+from textual.widgets import Button, DataTable, Label, Static
 
 
 class BasePanel(Static):
-    """Base panel with minimize/maximize functionality."""
+    """Base panel with shared header/footer chrome and toolbar support."""
 
     is_minimized: reactive[bool] = reactive(False)
     can_minimize: reactive[bool] = reactive(True)
@@ -22,56 +22,133 @@ class BasePanel(Static):
         self.panel_title = title
         self.panel_icon = icon
         self.original_height = None
-        self._min_control: PanelHeaderControl | None = None
-        self._max_control: PanelHeaderControl | None = None
+        self.title_label: Label | None = None
+        self.subtitle_label: Label | None = None
+        self.badge_label: Label | None = None
+        self.toolbar: Horizontal | None = None
+        self.content_container: Vertical | None = None
+        self.status_label: Label | None = None
+        self._toolbar_actions: dict[str, str | Callable[[], None]] = {}
+        self._pending_toolbar_actions: list[tuple[str, Callable[[], None] | None, str | None, str | None, str | None]] = []
 
-    def compose(self) -> Horizontal:
-        """Compose the panel with title bar and controls."""
+    def compose(self) -> ComposeResult:
+        """Compose the panel layout."""
         with Horizontal(id=f"{self.id}_header", classes="panel-header"):
-            self._min_control = PanelHeaderControl("▁", self.toggle_minimize, f"{self.id}_minimize")
-            yield self._min_control
-            self._max_control = PanelHeaderControl("▢", self.action_maximize, f"{self.id}_maximize")
-            yield self._max_control
-            title = self.panel_title
-            if self.panel_icon:
-                title = f"{self.panel_icon} {title}"
-            yield Label(title, id=f"{self.id}_title", classes="panel-title")
-        with Vertical(id=f"{self.id}_content", classes="panel-content"):
-            yield from self.compose_content()
-        yield Label("", id=f"{self.id}_status", classes="panel-status")
+            with Vertical(classes="panel-heading"):
+                title = self._format_title(self.panel_title, self.panel_icon)
+                self.title_label = Label(title, id=f"{self.id}_title", classes="panel-title")
+                yield self.title_label
+                self.subtitle_label = Label("", classes="panel-subtitle")
+                self.subtitle_label.display = False
+                yield self.subtitle_label
+            self.badge_label = Label("", classes="panel-badge")
+            self.badge_label.display = False
+            yield self.badge_label
+            self.toolbar = Horizontal(classes="panel-toolbar")
+            yield self.toolbar
 
-    def compose_content(self) -> Vertical:
+        with Vertical(id=f"{self.id}_content", classes="panel-content") as content:
+            self.content_container = content
+            yield from self.compose_content()
+
+        self.status_label = Label("", id=f"{self.id}_status", classes="panel-status")
+        yield self.status_label
+
+    def compose_content(self) -> ComposeResult:
         """Override this to add panel-specific content."""
         yield Label("Override compose_content() in subclass")
 
+    def on_mount(self) -> None:
+        """Mount any toolbar actions queued before compose completed."""
+        for args in self._pending_toolbar_actions:
+            self._create_toolbar_button(*args)
+        self._pending_toolbar_actions.clear()
+
     def watch_is_minimized(self, old_value: bool, new_value: bool) -> None:
         """React to minimize state changes."""
+        content = self.content_container
+        status = self.status_label
+        if not content or not status:
+            return
         if new_value:
-            # Store original height before minimizing
             if self.original_height is None:
                 self.original_height = self.styles.height
-            # Minimize - show only header
             self.styles.height = "auto"
-            content = self.query_one(f"#{self.id}_content")
-            status = self.query_one(f"#{self.id}_status")
             content.display = False
             status.display = False
-            # Update minimize button
-            if self._min_control:
-                self._min_control.update("▣")
         else:
-            # Restore original height and show all content
             if self.original_height:
                 self.styles.height = self.original_height
-            # Show all content
-            content = self.query_one(f"#{self.id}_content")
-            status = self.query_one(f"#{self.id}_status")
             content.display = True
             status.display = True
-            # Update minimize button
-            if self._min_control:
-                self._min_control.update("▁")
 
+    def set_title(self, title: str, icon: str | None = None) -> None:
+        """Update the panel title and optional icon."""
+        self.panel_title = title
+        if icon is not None:
+            self.panel_icon = icon
+        if self.title_label:
+            self.title_label.update(self._format_title(self.panel_title, self.panel_icon))
+
+    def set_subtitle(self, subtitle: str | None) -> None:
+        """Set or clear the subtitle beneath the title."""
+        if not self.subtitle_label:
+            return
+        if subtitle:
+            self.subtitle_label.update(subtitle)
+            self.subtitle_label.display = True
+        else:
+            self.subtitle_label.display = False
+
+    def set_badge(self, text: str, level: str = "info") -> None:
+        """Show a badge next to the title."""
+        if not self.badge_label:
+            return
+        color_map = {"info": "cyan", "success": "green", "warning": "yellow", "error": "red"}
+        color = color_map.get(level, "cyan")
+        self.badge_label.update(f"[{color}]{text}[/{color}]")
+        self.badge_label.display = True
+
+    def clear_badge(self) -> None:
+        """Hide the badge element."""
+        if self.badge_label:
+            self.badge_label.display = False
+
+    def add_toolbar_action(
+        self,
+        label: str,
+        callback: Callable[[], None] | None = None,
+        *,
+        action_name: str | None = None,
+        button_id: str | None = None,
+        tooltip: str | None = None,
+    ) -> None:
+        """Add a toolbar action button aligned to the right of the header."""
+
+        if button_id is None:
+            button_id = f"{self.id}_tool_{len(self._toolbar_actions)}"
+        record = (label, callback, action_name, button_id, tooltip)
+        if self.toolbar is None:
+            self._pending_toolbar_actions.append(record)
+        else:
+            self._create_toolbar_button(*record)
+
+    def clear_toolbar(self) -> None:
+        """Remove all toolbar buttons."""
+        self._toolbar_actions.clear()
+        if self.toolbar:
+            self.toolbar.remove_children()
+
+    def on_button_pressed(self, event: Button.Pressed) -> None:
+        """Dispatch toolbar button presses."""
+        action = self._toolbar_actions.get(event.button.id)
+        if callable(action):
+            action()
+            event.stop()
+            return
+        if isinstance(action, str) and hasattr(self, action):
+            getattr(self, action)()
+            event.stop()
 
     def action_maximize(self) -> None:
         """Maximize this panel (implementation in main app)."""
@@ -86,25 +163,67 @@ class BasePanel(Static):
         self.is_minimized = True
 
     def update_status(self, message: str, level: str = "info") -> None:
-        """Update status message."""
-        status = self.query_one(f"#{self.id}_status", Label)
-        # Add color based on level
+        """Update status message in the footer."""
+        if not self.status_label:
+            return
         color_map = {"info": "white", "success": "green", "warning": "yellow", "error": "red"}
         color = color_map.get(level, "white")
-        status.update(f"[{color}]{message}[/{color}]")
+        self.status_label.update(f"[{color}]{message}[/{color}]")
+
+    def _create_toolbar_button(
+        self,
+        label: str,
+        callback: Callable[[], None] | None,
+        action_name: str | None,
+        button_id: str | None,
+        tooltip: str | None,
+    ) -> None:
+        if not self.toolbar or button_id is None:
+            return
+        button = Button(
+            label,
+            id=button_id,
+            classes="panel-toolbar-button",
+            tooltip=tooltip or "",
+        )
+        self.toolbar.mount(button)
+        self._toolbar_actions[button_id] = callback or action_name or ""
+
+    @staticmethod
+    def _format_title(title: str, icon: str | None) -> str:
+        return f"{icon} {title}" if icon else title
 
 
-class PanelHeaderControl(Static):
-    """Clickable control used in panel headers."""
+class DataTablePanel(BasePanel):
+    """Base panel with a primary DataTable and cursor helpers."""
 
-    def __init__(self, label: str, callback: Callable[[], None], control_id: str):
-        super().__init__(label, id=control_id, classes="panel-control")
-        self._callback = callback
+    selected_row: reactive[int | None] = reactive(None)
 
-    def on_click(self, event: events.Click) -> None:  # type: ignore[override]
-        event.stop()
-        if self._callback:
-            self._callback()
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.primary_table: DataTable | None = None
+
+    def register_table(self, table: DataTable) -> DataTable:
+        """Designate the table used for default cursor actions."""
+        self.primary_table = table
+        return table
+
+    def action_cursor_down(self) -> None:
+        if self.primary_table:
+            self.primary_table.action_cursor_down()
+
+    def action_cursor_up(self) -> None:
+        if self.primary_table:
+            self.primary_table.action_cursor_up()
+
+    def clear_selection(self) -> None:
+        """Reset cached selection state."""
+        self.selected_row = None
+
+    def on_data_table_row_highlighted(self, event: DataTable.RowHighlighted) -> None:
+        """Track row selection for the primary table."""
+        if self.primary_table and event.control is self.primary_table:
+            self.selected_row = event.cursor_row
 
 
 class PanelMaximize(Message):

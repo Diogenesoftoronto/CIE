@@ -9,9 +9,10 @@ from pathlib import Path
 from typing import Any, Protocol
 
 from cie.config.settings import CIEConfig, get_config
-from cie.core.models import Evaluator, Optimizer, Policy, Trial, Workload
+from cie.core.models import Evaluator, Optimizer, Policy, Trial, Workload, Prompt
 from cie.evaluators import get_evaluator, list_evaluators
 from cie.optimizers.dspy_optimizer import DSPyOptimizer
+from cie.utils.wandb_import import load_wandb_rows, resolve_wandb_run_path
 
 
 class StorageBackend(Protocol):
@@ -31,6 +32,18 @@ class StorageBackend(Protocol):
 
     def get_policies(self) -> list[Policy]:
         """Get all policies from storage."""
+        ...
+
+    def save_prompt(self, prompt: Prompt) -> None:
+        """Save a prompt to storage."""
+        ...
+
+    def get_prompts(self) -> list[Prompt]:
+        """Get all prompts from storage."""
+        ...
+
+    def delete_prompt(self, prompt_id: str) -> None:
+        """Delete a prompt from storage."""
         ...
 
     def close(self) -> None:
@@ -86,6 +99,19 @@ class SQLiteStorageBackend:
                 description TEXT,
                 config TEXT,
                 tags TEXT
+            )
+        """
+        )
+        self.connection.execute(
+            """
+            CREATE TABLE IF NOT EXISTS prompts (
+                id TEXT PRIMARY KEY,
+                content TEXT NOT NULL,
+                description TEXT,
+                tags TEXT,
+                created_at TEXT NOT NULL,
+                updated_at TEXT NOT NULL,
+                metadata TEXT
             )
         """
         )
@@ -170,6 +196,49 @@ class SQLiteStorageBackend:
             policies.append(policy)
         return policies
 
+    def save_prompt(self, prompt: Prompt) -> None:
+        """Save a prompt to storage."""
+        self.connection.execute(
+            """
+            INSERT OR REPLACE INTO prompts (
+                id, content, description, tags, created_at, updated_at, metadata
+            ) VALUES (?, ?, ?, ?, ?, ?, ?)
+        """,
+            (
+                prompt.id,
+                prompt.content,
+                prompt.description,
+                json.dumps(prompt.tags),
+                prompt.created_at.isoformat(),
+                prompt.updated_at.isoformat(),
+                json.dumps(prompt.metadata),
+            ),
+        )
+        self.connection.commit()
+
+    def get_prompts(self) -> list[Prompt]:
+        """Get all prompts from storage."""
+        cursor = self.connection.execute("SELECT * FROM prompts")
+        rows = cursor.fetchall()
+        prompts = []
+        for row in rows:
+            prompt = Prompt(
+                id=row["id"],
+                content=row["content"],
+                description=row["description"] or "",
+                tags=json.loads(row["tags"] or "[]"),
+                created_at=datetime.fromisoformat(row["created_at"]),
+                updated_at=datetime.fromisoformat(row["updated_at"]),
+                metadata=json.loads(row["metadata"] or "{}"),
+            )
+            prompts.append(prompt)
+        return prompts
+
+    def delete_prompt(self, prompt_id: str) -> None:
+        """Delete a prompt from storage."""
+        self.connection.execute("DELETE FROM prompts WHERE id = ?", (prompt_id,))
+        self.connection.commit()
+
     def close(self) -> None:
         """Close storage connection."""
         if self.connection:
@@ -184,6 +253,7 @@ class JSONStorageBackend:
         self.data_dir.mkdir(parents=True, exist_ok=True)
         self.trials_file = self.data_dir / "trials.json"
         self.policies_file = self.data_dir / "policies.json"
+        self.prompts_file = self.data_dir / "prompts.json"
 
     def _load_json(self, file_path: Path) -> list[dict[str, Any]]:
         """Load JSON data from file."""
@@ -270,6 +340,46 @@ class JSONStorageBackend:
             policies.append(policy)
         return policies
 
+    def save_prompt(self, prompt: Prompt) -> None:
+        """Save a prompt to storage."""
+        prompts = self._load_json(self.prompts_file)
+        # Remove existing prompt with same id
+        prompts = [p for p in prompts if p["id"] != prompt.id]
+        prompt_data = {
+            "id": prompt.id,
+            "content": prompt.content,
+            "description": prompt.description,
+            "tags": prompt.tags,
+            "created_at": prompt.created_at.isoformat(),
+            "updated_at": prompt.updated_at.isoformat(),
+            "metadata": prompt.metadata,
+        }
+        prompts.append(prompt_data)
+        self._save_json(self.prompts_file, prompts)
+
+    def get_prompts(self) -> list[Prompt]:
+        """Get all prompts from storage."""
+        prompts_data = self._load_json(self.prompts_file)
+        prompts = []
+        for data in prompts_data:
+            prompt = Prompt(
+                id=data["id"],
+                content=data["content"],
+                description=data.get("description", ""),
+                tags=data.get("tags", []),
+                created_at=datetime.fromisoformat(data["created_at"]),
+                updated_at=datetime.fromisoformat(data["updated_at"]),
+                metadata=data.get("metadata", {}),
+            )
+            prompts.append(prompt)
+        return prompts
+
+    def delete_prompt(self, prompt_id: str) -> None:
+        """Delete a prompt from storage."""
+        prompts = self._load_json(self.prompts_file)
+        prompts = [p for p in prompts if p["id"] != prompt_id]
+        self._save_json(self.prompts_file, prompts)
+
     def close(self) -> None:
         """Close storage connection (no-op for JSON backend)."""
         pass
@@ -281,6 +391,7 @@ class InMemoryStorageBackend:
     def __init__(self):
         self.trials: list[Trial] = []
         self.policies: list[Policy] = []
+        self.prompts: list[Prompt] = []
 
     def save_trial(self, trial: Trial) -> None:
         """Save a trial to storage."""
@@ -302,6 +413,19 @@ class InMemoryStorageBackend:
     def get_policies(self) -> list[Policy]:
         """Get all policies from storage."""
         return self.policies.copy()
+
+    def save_prompt(self, prompt: Prompt) -> None:
+        """Save a prompt to storage."""
+        self.prompts = [p for p in self.prompts if p.id != prompt.id]
+        self.prompts.append(prompt)
+
+    def get_prompts(self) -> list[Prompt]:
+        """Get all prompts from storage."""
+        return self.prompts.copy()
+
+    def delete_prompt(self, prompt_id: str) -> None:
+        """Delete a prompt from storage."""
+        self.prompts = [p for p in self.prompts if p.id != prompt_id]
 
     def close(self) -> None:
         """Close storage connection (no-op for in-memory backend)."""
@@ -480,6 +604,47 @@ class CIEBackend:
                 unique_pareto.append(trial)
         self.pareto = unique_pareto
 
+    def ingest_wandb_run(self, path: str | Path | None = None) -> list[Trial]:
+        """Import metrics from a W&B run directory (latest-run by default)."""
+        run_dir = resolve_wandb_run_path(path)
+        rows = load_wandb_rows(run_dir)
+        if not rows:
+            return []
+
+        existing_ids = {
+            trial.metadata.get("wandb_row_id")
+            for trial in self.trials
+            if isinstance(trial.metadata, dict) and trial.metadata.get("wandb_row_id")
+        }
+        ingested: list[Trial] = []
+        for row in rows:
+            row_id = row["metadata"].get("wandb_row_id")
+            if row_id and row_id in existing_ids:
+                continue
+            metrics = row["metrics"]
+            if not metrics:
+                continue
+            self._trial_id_counter += 1
+            trial = Trial(
+                id=self._trial_id_counter,
+                policy_name=row["policy_name"],
+                metrics=metrics,
+                score=self.score(metrics),
+                workload=row["workload"],
+                created_at=row["created_at"],
+                artifact_id=row.get("artifact_id"),
+                metadata=row["metadata"],
+            )
+            self.trials.append(trial)
+            self.storage.save_trial(trial)
+            ingested.append(trial)
+            if row_id:
+                existing_ids.add(row_id)
+
+        if ingested:
+            self._rebuild_pareto()
+        return ingested
+
     def list_optimizers(self) -> list[tuple[str, dict[str, Any]]]:
         """
         List available optimizers with their metadata.
@@ -608,7 +773,33 @@ class CIEBackend:
         )
         # Save the adopted policy
         self.storage.save_policy(self.active_policy)
+        self.storage.save_policy(self.active_policy)
         return True
+
+    def list_prompts(self) -> list[Prompt]:
+        """List all prompts."""
+        return self.storage.get_prompts()
+
+    def save_prompt(self, id: str, content: str, description: str = "", tags: list[str] | None = None) -> Prompt:
+        """Save a prompt."""
+        # Check if exists to preserve created_at
+        existing = next((p for p in self.list_prompts() if p.id == id), None)
+        created_at = existing.created_at if existing else datetime.now()
+        
+        prompt = Prompt(
+            id=id,
+            content=content,
+            description=description,
+            tags=tags or [],
+            created_at=created_at,
+            updated_at=datetime.now(),
+        )
+        self.storage.save_prompt(prompt)
+        return prompt
+
+    def delete_prompt(self, prompt_id: str) -> None:
+        """Delete a prompt."""
+        self.storage.delete_prompt(prompt_id)
 
     def get_stats(self) -> dict[str, Any]:
         """Get backend statistics."""

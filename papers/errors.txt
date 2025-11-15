@@ -1,0 +1,32 @@
+error: label `<brown2020>` does not exist in the document
+error: cannot reference text
+error: label `<khattab2023>` does not exist in the document
+error: label `<zhang2024>` does not exist in the document
+error: label `<deb2002>` does not exist in the document
+error: label `<reynolds2021>` does not exist in the document
+error: label `<khattab2023>` does not exist in the document
+error: cannot reference link
+error: label `<miettinen1999>` does not exist in the document
+error: label `<pareto1896>` does not exist in the document
+error: label `<deb2002>` does not exist in the document
+error: label `<lu2019>` does not exist in the document
+error: label `<horn2015>` does not exist in the document
+error: label `<martinez2020>` does not exist in the document
+error: label `<zhang2024>` does not exist in the document
+error: label `<child2019>` does not exist in the document
+error: label `<wingate2022>` does not exist in the document
+error: label `<wu2022>` does not exist in the document
+error: label `<liang2022>` does not exist in the document
+error: label `<srivastava2022>` does not exist in the document
+error: cannot reference text
+error: label `<khattab2023>` does not exist in the document
+error: label `<zhang2024>` does not exist in the document
+error: label `<zhang2024>` does not exist in the document
+error: label `<liang2022>` does not exist in the document
+error: label `<khattab2023>` does not exist in the document
+error: cannot reference text
+error: cannot reference link
+error: label `<liang2022>` does not exist in the document
+error: label `<zhang2024>` does not exist in the document
+error: label `<zhang2024>` does not exist in the document
+error: label `<zhang2024>` does not exist in the document

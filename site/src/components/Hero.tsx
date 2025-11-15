@@ -29,8 +29,8 @@ const Hero: React.FC = () => {
         </h1>
 
         <p className="text-xl md:text-2xl text-white/80 mb-12 max-w-3xl mx-auto leading-relaxed">
-          An interactive framework for AI-powered optimization and evaluation of machine learning systems. 
-          Built with modern Python, featuring real AI model integration and comprehensive CI/CD.
+          An interactive framework for AI-powered optimization and evaluation with advanced context introspection.
+          Transform AI agents into self-aware, self-optimizing systems with a premium Harlequin-inspired TUI and real-time prompt management.
         </p>
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-16">
@@ -45,18 +45,22 @@ const Hero: React.FC = () => {
         </div>
 
         {/* Key metrics */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-3xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 max-w-4xl mx-auto">
           <div className="text-center">
-            <div className="text-3xl font-bold text-white mb-2">3+</div>
-            <div className="text-white/70">AI Models</div>
+            <div className="text-3xl font-bold text-white mb-2">101</div>
+            <div className="text-white/70">Tests Passing</div>
           </div>
           <div className="text-center">
-            <div className="text-3xl font-bold text-white mb-2">25%</div>
-            <div className="text-white/70">Test Coverage</div>
+            <div className="text-3xl font-bold text-white mb-2">32%</div>
+            <div className="text-white/70">Code Coverage</div>
           </div>
           <div className="text-center">
             <div className="text-3xl font-bold text-white mb-2">100%</div>
             <div className="text-white/70">Ruff Pass</div>
+          </div>
+          <div className="text-center">
+            <div className="text-3xl font-bold text-white mb-2">3+</div>
+            <div className="text-white/70">Context Optimizers</div>
           </div>
         </div>
       </div>

@@ -128,3 +128,23 @@ class ModelProvider(Protocol):
     def get_model_info(self) -> dict[str, Any]:
         """Get information about the model."""
         ...
+
+
+@dataclass
+class Prompt:
+    """Prompt configuration and template."""
+
+    id: str
+    content: str
+    description: str = ""
+    tags: list[str] = field(default_factory=list)
+    created_at: datetime = field(default_factory=datetime.now)
+    updated_at: datetime = field(default_factory=datetime.now)
+    metadata: dict[str, Any] = field(default_factory=dict)
+
+    def __post_init__(self) -> None:
+        """Validate prompt after creation."""
+        if not self.id:
+            raise ValueError("Prompt ID cannot be empty")
+        if not self.content:
+            raise ValueError("Prompt content cannot be empty")

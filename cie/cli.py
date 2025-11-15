@@ -332,14 +332,25 @@ def serve(ctx, host: str, port: int, debug: bool):
 
 
 @cli.command()
+@click.option("--demo", is_flag=True, help="Start the TUI with pre-loaded demo data")
 @click.pass_context
-def tui(ctx):
+def tui(ctx, demo: bool):
     """Start the TUI application."""
     config = ctx.obj["config"]
     try:
         from cie.ui.app import main
 
-        main(config)
+        demo_metadata = None
+        if demo:
+            from cie.core.backend import set_backend
+            from cie.demo import create_demo_backend
+
+            backend, demo_metadata = create_demo_backend(config)
+            set_backend(backend)
+            config = backend.config
+            click.echo("Loaded LeetCode demo scenario with synthetic datasets.")
+
+        main(config, demo_mode=demo, demo_metadata=demo_metadata)
     except ImportError:
         click.echo("TUI not available. Install with: pip install cie[ui]", err=True)
         sys.exit(1)

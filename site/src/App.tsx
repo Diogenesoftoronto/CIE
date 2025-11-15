@@ -1,8 +1,8 @@
-import React from 'react'
 import Header from './components/Header'
 import Hero from './components/Hero'
 import Introduction from './components/Introduction'
 import Architecture from './components/Architecture'
+import ContextIntrospection from './components/ContextIntrospection'
 import InteractiveDemo from './components/InteractiveDemo'
 import Algorithms from './components/Algorithms'
 import Evaluation from './components/Evaluation'
@@ -17,6 +17,7 @@ function App() {
       <Hero />
       <Introduction />
       <Architecture />
+      <ContextIntrospection />
       <InteractiveDemo />
       <Algorithms />
       <Evaluation />
