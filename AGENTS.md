@@ -4,6 +4,17 @@
 
 **CIE** (Optimization & Evaluation) is a modern Python TUI (Terminal User Interface) application built with the Textual framework. It provides an interactive interface for running optimization experiments using different AI algorithms and evaluating their performance across various workloads.
 
+### Key Capabilities (Current Generation)
+
+- **Multi-panel Textual TUI** with a Dolphie-inspired top bar, Optimizers/Evals/Experiments/Context/Status panels, live metric cards, and modal tooling.
+- **Context introspection & manipulation** via the `[CTX]` panel and the `Ctrl+/` modal. Agents can capture frames, reorganize context trees, compress large objects, and export structured introspection snapshots.
+- **W&B LEET ingestion**: `Ctrl+Shift+W` (global) or `Shift+S` in Experiments syncs `wandb/latest-run` (or `CIE_WANDB_RUN`) into CIE trials with provenance metadata.
+- **Demo-ready workflows**: `cie tui --demo` boots an in-memory “LeetCode Practice Lab” showcasing seeded workloads, metric cards, and contextual guidance.
+- **Benchmark harness** under `benchmark/` with ready-to-run tasks, metrics, and report templates (see `benchmark/README.md` and `benchmark/runner.py`). Benchmarks mirror the Braintrust-style evaluation flow and are CI-friendly.
+- **CLI & automation**: `cie optimize`, `cie evaluators`, `cie trials --pareto`, screenshot tooling, and benchmarking helpers allow agents to script experiments without the TUI.
+
+These pieces combine the architectural narrative from `vision.md`, the day-to-day operator needs, and the benchmark artifacts into one cohesive product.
+
 ## Project Structure
 
 ```
@@ -22,10 +33,11 @@ cie/
 │   ├── plugins/            # Drop-in evaluator plugins (register via register_evaluator)
 │   └── __init__.py
 ├── ui/                     # TUI components
-│   ├── app.py             # Main TUI application
-│   ├── panels.py          # UI panels (Optimizers, Evals, Experiments)
+│   ├── app.py             # Main TUI application + top bar wiring
+│   ├── base.py            # Base panel + DataTable helpers
+│   ├── panels/            # Optimizers, Evals, Experiments, Context, Status
+│   ├── components/        # Command palette, status bar, metric cards, etc.
 │   ├── modals.py          # Modal dialogs
-│   ├── base.py            # Base UI components
 │   ├── messages.py        # Message definitions
 │   ├── theme.tcss         # Shared Textual design system
 │   └── __init__.py
@@ -34,6 +46,7 @@ cie/
 │   └── __init__.py
 ├── utils/                  # Utility functions
 │   ├── model_providers.py # AI model provider implementations
+│   ├── wandb_import.py    # Ingest W&B beta LEET runs into CIE trials
 │   └── __init__.py
 ├── cli.py                 # Command-line interface
 ├── __init__.py           # Package initialization
@@ -87,8 +100,14 @@ pip install -e ".[dev]"
 ```bash
 # TUI Application
 cie tui
+# Demo mode with seeded LeetCode scenario
+cie tui --demo
+```
 
-# CLI Commands
+Optional: export `CIE_WANDB_RUN=/path/to/wandb/run` (defaults to `./wandb/latest-run`) so `Ctrl+Shift+W` / “Sync W&B” pulls metrics into the Experiments panel.
+
+#### CLI Commands
+```bash
 cie --help
 cie optimize --iterations 10
 cie stats
@@ -111,6 +130,9 @@ pytest tests/test_end_to_end.py  # Specific test file
 black cie/                # Format code
 ruff check cie/           # Lint code
 mypy cie/                 # Type checking
+
+# Refresh paper-ready screenshots
+python scripts/generate_tui_screenshots.py
 ```
 
 ## Testing Strategy
@@ -137,6 +159,13 @@ pytest -m "not slow"                 # Skip slow tests
 ```
 
 **Test Coverage**: Currently ~30% and improving, with focus on critical paths
+
+## Benchmarks & Research Artefacts
+
+- **Benchmark Harness** (`benchmark/`): contains `runner.py`, `metrics.py`, and ready-to-run task templates (see `benchmark/README.md`). Invoke via `uv run python benchmark/runner.py` to execute suites locally or wire it into CI.
+- **Benchmark Tasks**: lives under `benchmark/tasks/` mirroring the mixed workload set (MicroEval, MacroEval, TextEval, context-heavy exercises).
+- **SYSTEM_SUMMARY.md & BENCHMARK_GUIDE.md**: describe current benchmark status, expectations, and how to extend the suite.
+- **Paper Drafts**: see `papers/` (new) for ongoing write-ups that connect the system design, benchmarks, and demo scenarios to research narratives.
 
 ## Code Architecture & Patterns
 
@@ -174,7 +203,9 @@ class ModelProvider(Protocol):  # Interface for AI model providers
 - `CIEOptimEvalsApp`: Main application with modern TUI design
 - `OptimizersPanel`: Algorithm selection and real-time configuration
 - `EvalsPanel`: Workload evaluation with live updates
-- `ExperimentsPanel`: Trial history and Pareto frontier visualization
+- **Experiments Panel**: Visualization of trial history and Pareto frontier.
+- **Prompts Panel**: Management of DSPy signatures and prompt templates.
+- **Context Panel**: Real-time introspection of the agent's context window. Embedded context introspection + manipulation workspace (mirrors the modal navigator and powers `--demo`)
 - `WeightsModal`, `ConfigModal`: Interactive configuration editing
 - `StatusPanel`: Real-time backend statistics
 - `theme.tcss`: Textual CSS theme that defines colors, spacing, buttons, tables, and modal styles for every component
@@ -298,6 +329,13 @@ tests/
 3. Modify UI tables to display new metric
 4. Update scoring function if needed
 5. Add tests for new metric behavior
+
+### Importing W&B Runs
+1. Ensure a W&B run directory is available (default: `./wandb/latest-run`). Override with `CIE_WANDB_RUN=/absolute/path/to/run`.
+2. Launch `cie tui` (or `cie tui --demo`) and switch to the Experiments panel.
+3. Click the “Sync W&B” toolbar button or press `Shift+S` (global shortcut: `Ctrl+Shift+W`).
+4. New trials appear with `metadata.source == "wandb"` so re-running the sync skips already ingested steps.
+5. UI artifacts (metric cards, sparklines, Pareto points) refresh automatically; use `python scripts/generate_tui_screenshots.py` if documentation needs updated captures.
 
 ## Important Implementation Details
 

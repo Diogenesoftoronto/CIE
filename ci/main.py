@@ -13,6 +13,7 @@ This pipeline handles:
 
 import asyncio
 import sys
+import time
 from pathlib import Path
 
 import dagger
@@ -185,6 +186,23 @@ class CieCI:
             return "Documentation generation skipped"
 
     @function
+    async def screenshots(self) -> str:
+        """Refresh TUI screenshots for papers/assets."""
+        print("🖼️ Capturing TUI screenshots...")
+        try:
+            result = await (
+                self.python_container()
+                .with_exec(["python", "scripts/generate_tui_screenshots.py"])
+                .stdout()
+            )
+            print("✅ Screenshots refreshed")
+            return result or "Screenshots refreshed"
+        except Exception as e:
+            warning = f"Screenshot generation skipped: {e}"
+            print(f"⚠️  {warning}")
+            return warning
+
+    @function
     async def quality_gate(self) -> str:
         """Run all quality checks (linting, formatting, type checking)."""
         print("🚪 Running quality gate checks...")
@@ -241,6 +259,10 @@ class CieCI:
 
         # Documentation
         docs_result = await self.docs()
+        screenshots_result = await self.screenshots()
+        screenshot_status = (
+            "REFRESHED" if "skipped" not in screenshots_result.lower() else "SKIPPED"
+        )
 
         end_time = time.time()
         duration = end_time - start_time
@@ -255,6 +277,7 @@ Security Scan: ✅ COMPLETED
 Tests: ✅ PASSED
 Build: ✅ COMPLETED - {package_path}
 Documentation: ✅ GENERATED
+Screenshots: ✅ {screenshot_status}
 
 Total Duration: {duration:.2f}s
 Pipeline Status: ✅ SUCCESS

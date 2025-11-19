@@ -4,7 +4,6 @@ Modal dialogs for CIE application.
 
 from __future__ import annotations
 
-import re
 from collections.abc import Iterable
 from typing import Any
 
@@ -15,6 +14,7 @@ from textual.widgets import Button, Input, Label, Static, ListView, ListItem
 
 from cie.config.settings import get_config
 from cie.core.backend import get_backend
+from cie.ui.components.context_navigator import ContextNavigator
 
 
 class WeightsModal(ModalScreen):
@@ -40,7 +40,7 @@ class WeightsModal(ModalScreen):
             for metric, weight in self.config.evaluation.metric_weights.items():
                 with Horizontal(classes="weight-row"):
                     yield Label(f"{metric}:", classes="weight-label")
-                    inp = Input(str(weight), classes="weight-input", id=f"weight_{metric}")
+                    inp = self._weight_input(metric, weight)
                     self.inputs[metric] = inp
                     yield inp
             yield Label(
@@ -64,7 +64,9 @@ class WeightsModal(ModalScreen):
     def on_input_changed(self, event: Input.Changed) -> None:
         """Handle input changes."""
         # Validate input format
-        if not re.match(r"^[+-]?([0-9]+(\.[0-9]*)?|\.[0-9]+)$", event.value):
+        try:
+            float(event.value.strip())
+        except ValueError:
             event.input.styles.border = ("heavy", "red")
         else:
             event.input.styles.border = ("solid", "white")
@@ -92,10 +94,11 @@ class WeightsModal(ModalScreen):
         new_weights = {}
         for metric, inp in self.inputs.items():
             value = inp.value.strip()
-            if not re.match(r"^[+-]?([0-9]+(\.[0-9]*)?|\.[0-9]+)$", value):
+            try:
+                new_weights[metric] = float(value)
+            except ValueError:
                 inp.styles.border = ("heavy", "red")
                 return
-            new_weights[metric] = float(value)
         # Apply weights
         self.config.evaluation.metric_weights = new_weights
         # Re-score existing trials
@@ -120,6 +123,19 @@ class WeightsModal(ModalScreen):
             if metric in self.inputs:
                 self.inputs[metric].value = str(default_value)
                 self.inputs[metric].styles.border = ("solid", "white")
+
+    def _weight_input(self, metric: str, value: float) -> Input:
+        """Create a numeric input tailored for weight editing."""
+        return Input(
+            str(value),
+            placeholder="0.0",
+            id=f"weight_{metric}",
+            classes="weight-input",
+            type="number",
+            restrict=r"[-0-9\.]",
+            tooltip=f"Weight applied to {metric}",
+            compact=True,
+        )
 
 
 class ConfigModal(ModalScreen):
@@ -146,77 +162,93 @@ class ConfigModal(ModalScreen):
                 yield Label("Model Configuration", classes="config-section-title")
                 with Horizontal(classes="config-row"):
                     yield Label("Provider:", classes="config-label")
-                    provider_input = Input(
-                        self.config.model.provider, classes="config-input", id="config_provider"
+                    provider_input = self._config_input(
+                        "provider",
+                        self.config.model.provider,
+                        placeholder="openai",
+                        tooltip="Model provider identifier",
                     )
-                    self.inputs["provider"] = provider_input
                     yield provider_input
                 with Horizontal(classes="config-row"):
                     yield Label("Model Name:", classes="config-label")
-                    model_input = Input(
-                        self.config.model.model_name, classes="config-input", id="config_model_name"
+                    model_input = self._config_input(
+                        "model_name",
+                        self.config.model.model_name,
+                        placeholder="gpt-4o-mini",
+                        tooltip="Model name/sku",
                     )
-                    self.inputs["model_name"] = model_input
                     yield model_input
                 with Horizontal(classes="config-row"):
                     yield Label("Temperature:", classes="config-label")
-                    temp_input = Input(
+                    temp_input = self._config_input(
+                        "temperature",
                         str(self.config.model.temperature),
-                        classes="config-input",
-                        id="config_temperature",
+                        placeholder="0.7",
+                        tooltip="Sampling temperature (0-2)",
+                        input_type="number",
+                        restrict=r"[-0-9\.]",
+                        classes="config-input numeric-input",
                     )
-                    self.inputs["temperature"] = temp_input
                     yield temp_input
                 with Horizontal(classes="config-row"):
                     yield Label("Max Tokens:", classes="config-label")
-                    tokens_input = Input(
+                    tokens_input = self._config_input(
+                        "max_tokens",
                         str(self.config.model.max_tokens),
-                        classes="config-input",
-                        id="config_max_tokens",
+                        placeholder="4096",
+                        tooltip="Maximum completion tokens",
+                        input_type="number",
+                        restrict=r"[0-9]",
+                        classes="config-input numeric-input",
                     )
-                    self.inputs["max_tokens"] = tokens_input
                     yield tokens_input
             # Storage Configuration
             with Vertical(classes="config-section"):
                 yield Label("Storage Configuration", classes="config-section-title")
                 with Horizontal(classes="config-row"):
                     yield Label("Backend:", classes="config-label")
-                    storage_input = Input(
+                    storage_input = self._config_input(
+                        "storage_backend",
                         self.config.storage.backend,
-                        classes="config-input",
-                        id="config_storage_backend",
+                        placeholder="sqlite/json/memory",
+                        tooltip="Storage backend",
                     )
-                    self.inputs["storage_backend"] = storage_input
                     yield storage_input
                 with Horizontal(classes="config-row"):
                     yield Label("Experiments Directory:", classes="config-label")
-                    dir_input = Input(
+                    dir_input = self._config_input(
+                        "experiments_dir",
                         self.config.storage.experiments_dir,
-                        classes="config-input",
-                        id="config_experiments_dir",
+                        placeholder="~/.cie/experiments",
+                        tooltip="Directory to store experiment data",
                     )
-                    self.inputs["experiments_dir"] = dir_input
                     yield dir_input
             # Optimization Configuration
             with Vertical(classes="config-section"):
                 yield Label("Optimization Configuration", classes="config-section-title")
                 with Horizontal(classes="config-row"):
                     yield Label("Max Iterations:", classes="config-label")
-                    iter_input = Input(
+                    iter_input = self._config_input(
+                        "max_iterations",
                         str(self.config.optimization.max_iterations),
-                        classes="config-input",
-                        id="config_max_iterations",
+                        placeholder="100",
+                        tooltip="Maximum iterations per run",
+                        input_type="number",
+                        restrict=r"[0-9]",
+                        classes="config-input numeric-input",
                     )
-                    self.inputs["max_iterations"] = iter_input
                     yield iter_input
                 with Horizontal(classes="config-row"):
                     yield Label("Population Size:", classes="config-label")
-                    pop_input = Input(
+                    pop_input = self._config_input(
+                        "population_size",
                         str(self.config.optimization.population_size),
-                        classes="config-input",
-                        id="config_population_size",
+                        placeholder="20",
+                        tooltip="Population size for optimizers",
+                        input_type="number",
+                        restrict=r"[0-9]",
+                        classes="config-input numeric-input",
                     )
-                    self.inputs["population_size"] = pop_input
                     yield pop_input
             yield Label(
                 "Changes will take effect immediately. Some changes may require restart.",
@@ -249,23 +281,27 @@ class ConfigModal(ModalScreen):
         try:
             # Model configuration
             if "provider" in self.inputs:
-                self.config.model.provider = self.inputs["provider"].value
+                self.config.model.provider = self._require_value("provider")
             if "model_name" in self.inputs:
-                self.config.model.model_name = self.inputs["model_name"].value
+                self.config.model.model_name = self._require_value("model_name")
             if "temperature" in self.inputs:
-                self.config.model.temperature = float(self.inputs["temperature"].value)
+                self.config.model.temperature = float(self._require_value("temperature"))
             if "max_tokens" in self.inputs:
-                self.config.model.max_tokens = int(self.inputs["max_tokens"].value)
+                self.config.model.max_tokens = int(self._require_value("max_tokens"))
             # Storage configuration
             if "storage_backend" in self.inputs:
-                self.config.storage.backend = self.inputs["storage_backend"].value
+                self.config.storage.backend = self._require_value("storage_backend")
             if "experiments_dir" in self.inputs:
-                self.config.storage.experiments_dir = self.inputs["experiments_dir"].value
+                self.config.storage.experiments_dir = self._require_value("experiments_dir")
             # Optimization configuration
             if "max_iterations" in self.inputs:
-                self.config.optimization.max_iterations = int(self.inputs["max_iterations"].value)
+                self.config.optimization.max_iterations = int(
+                    self._require_value("max_iterations")
+                )
             if "population_size" in self.inputs:
-                self.config.optimization.population_size = int(self.inputs["population_size"].value)
+                self.config.optimization.population_size = int(
+                    self._require_value("population_size")
+                )
             # Dismiss and notify
             self.dismiss()
             self.post_message(self.Applied())
@@ -289,6 +325,36 @@ class ConfigModal(ModalScreen):
         for key, default_value in defaults.items():
             if key in self.inputs:
                 self.inputs[key].value = default_value
+
+    def _config_input(
+        self,
+        key: str,
+        value: str,
+        *,
+        placeholder: str = "",
+        tooltip: str = "",
+        input_type: str = "text",
+        restrict: str | None = None,
+        classes: str = "config-input",
+    ) -> Input:
+        field = Input(
+            value,
+            placeholder=placeholder,
+            tooltip=tooltip,
+            id=f"config_{key}",
+            classes=classes,
+            type=input_type,
+            restrict=restrict,
+            compact=True,
+        )
+        self.inputs[key] = field
+        return field
+
+    def _require_value(self, key: str) -> str:
+        value = self.inputs[key].value.strip()
+        if not value:
+            raise ValueError(f"{key.replace('_', ' ').title()} cannot be empty")
+        return value
 
 
 class MessageModal(ModalScreen[Any]):
@@ -472,8 +538,10 @@ Navigation:
   Ctrl+W        : Edit objective weights
   Ctrl+O        : Edit configuration
   Ctrl+T        : Toggle status panel
+  Ctrl+/        : Open context tools
   F1            : Help (this screen)
   Ctrl+C        : Quit app
+  Ctrl+Shift+O  : Onboarding tour
 
 Panel Shortcuts:
   Optimizers : O run • W weights
@@ -509,7 +577,8 @@ class TutorModal(ModalScreen):
 2. Switch tabs with H/L or Ctrl+Tab to reach Evaluations.
 3. In Evaluations, select a workload (j/k) and press E to run.
 4. Jump to Experiments (M or Tab) to inspect trials and adopt.
-5. Use Ctrl+Shift+P for the command palette at any time.
+5. Use the Prompts panel to manage DSPy signatures and templates.
+6. Use Ctrl+Shift+P for the command palette at any time.
 """
             yield Static(tips, classes="help-text")
             with Horizontal(classes="modal-buttons"):
@@ -583,3 +652,128 @@ class CommandPaletteModal(ModalScreen):
         if callable(handler):
             handler()
         self.dismiss()
+
+
+class ContextToolsModal(ModalScreen):
+    """Full-screen modal hosting the context navigator."""
+
+    def compose(self) -> Vertical:
+        with Vertical(id="context-tools-modal"):
+            yield Label("Context Tools", id="context_tools_title")
+            yield Label(
+                "Capture live context, reorganize, and export snapshots.",
+                id="context_tools_subtitle",
+            )
+            yield ContextNavigator(id="context_navigator")
+            yield Label("Press Esc to close • Use header buttons for actions", id="context_tools_hint")
+
+    def key_escape(self) -> None:
+        self.dismiss()
+
+
+class PromptModal(ModalScreen):
+    """Modal for creating or editing a prompt."""
+
+    class Applied(Message):
+        """Message sent when prompt is saved."""
+
+        def __init__(self):
+            super().__init__()
+
+    def __init__(self, prompt_id: str | None = None):
+        super().__init__()
+        self.backend = get_backend()
+        self.prompt_id = prompt_id
+        self.inputs: dict[str, Any] = {}
+
+    def compose(self) -> Vertical:
+        """Compose the modal content."""
+        title = "Edit Prompt" if self.prompt_id else "New Prompt"
+        with Vertical(id="prompt-modal"):
+            yield Label(title, id="pm_title")
+            
+            # ID Field
+            yield Label("ID (Signature Name):", classes="pm-label")
+            self.inputs["id"] = Input(
+                self.prompt_id or "",
+                placeholder="e.g. dspy.Signature",
+                id="pm_id",
+                disabled=bool(self.prompt_id),
+            )
+            yield self.inputs["id"]
+
+            # Description Field
+            yield Label("Description:", classes="pm-label")
+            self.inputs["description"] = Input(
+                placeholder="Brief description of what this prompt does",
+                id="pm_description",
+            )
+            yield self.inputs["description"]
+
+            # Tags Field
+            yield Label("Tags (comma separated):", classes="pm-label")
+            self.inputs["tags"] = Input(
+                placeholder="rag, classification, v1",
+                id="pm_tags",
+            )
+            yield self.inputs["tags"]
+
+            # Content Field
+            yield Label("Template / Content:", classes="pm-label")
+            from textual.widgets import TextArea
+            self.inputs["content"] = TextArea.code_editor(
+                "", language="python", id="pm_content"
+            )
+            yield self.inputs["content"]
+
+            with Horizontal(classes="modal-buttons"):
+                yield Button("Save", id="pm_save", classes="modal-button")
+                yield Button("Cancel", id="pm_cancel", classes="modal-button")
+
+    def on_mount(self) -> None:
+        """Load data if editing."""
+        if self.prompt_id:
+            # Find prompt
+            prompt = next((p for p in self.backend.list_prompts() if p.id == self.prompt_id), None)
+            if prompt:
+                self.inputs["description"].value = prompt.description
+                self.inputs["tags"].value = ", ".join(prompt.tags)
+                self.inputs["content"].text = prompt.content
+        
+        if not self.prompt_id:
+            self.set_focus(self.inputs["id"])
+        else:
+            self.set_focus(self.inputs["content"])
+
+    def on_button_pressed(self, event: Button.Pressed) -> None:
+        """Handle button presses."""
+        if event.button.id == "pm_save":
+            self._save_prompt()
+        elif event.button.id == "pm_cancel":
+            self.dismiss()
+
+    def _save_prompt(self) -> None:
+        """Save the prompt."""
+        p_id = self.inputs["id"].value.strip()
+        content = self.inputs["content"].text
+        description = self.inputs["description"].value.strip()
+        tags = [t.strip() for t in self.inputs["tags"].value.split(",") if t.strip()]
+
+        if not p_id:
+            self.notify("Prompt ID is required", severity="error")
+            return
+        if not content:
+            self.notify("Content is required", severity="error")
+            return
+
+        try:
+            self.backend.save_prompt(
+                id=p_id,
+                content=content,
+                description=description,
+                tags=tags,
+            )
+            self.dismiss(True)
+            self.notify(f"Prompt '{p_id}' saved", severity="info")
+        except Exception as e:
+            self.notify(f"Error saving prompt: {e}", severity="error")

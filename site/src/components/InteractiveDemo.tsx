@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Play, Pause, RotateCcw, TrendingUp, Target, Clock, DollarSign } from 'lucide-react'
+import { Play, Pause, RotateCcw, TrendingUp, Target, Clock, DollarSign, Brain, Search } from 'lucide-react'
 
 const InteractiveDemo: React.FC = () => {
   const [isRunning, setIsRunning] = useState(false)
@@ -9,11 +9,15 @@ const InteractiveDemo: React.FC = () => {
     latency: 0.85,
     cost: 0.65,
     accuracy: 0.92,
-    score: 0.81
+    score: 0.81,
+    context_efficiency: 0.65,
+    compression_ratio: 0.0
   })
 
   const algorithms = [
     { id: 'dspy', name: 'DSPy', color: 'blue', description: 'AI-powered optimization with artifacts' },
+    { id: 'context-aware', name: 'Context Aware', color: 'indigo', description: 'Self-optimizing with context analysis' },
+    { id: 'context-compression', name: 'Context Compression', color: 'emerald', description: 'Optimize context size and efficiency' },
     { id: 'hillclimb', name: 'Hill Climb', color: 'green', description: 'Gradient-based parameter tuning' },
     { id: 'bandit', name: 'Bandit', color: 'purple', description: 'Multi-armed bandit exploration' }
   ]
@@ -24,12 +28,21 @@ const InteractiveDemo: React.FC = () => {
       interval = setInterval(() => {
         setCurrentIteration(prev => prev + 1)
         // Simulate optimization progress
-        setMetrics(prev => ({
-          latency: Math.max(0.1, prev.latency - Math.random() * 0.02),
-          cost: Math.max(0.1, prev.cost - Math.random() * 0.015),
-          accuracy: Math.min(0.99, prev.accuracy + Math.random() * 0.01),
-          score: Math.min(0.99, prev.score + Math.random() * 0.005)
-        }))
+        setMetrics(prev => {
+          const isContextAlgorithm = selectedAlgorithm.includes('context')
+          return {
+            latency: Math.max(0.1, prev.latency - Math.random() * 0.02),
+            cost: Math.max(0.1, prev.cost - Math.random() * 0.015),
+            accuracy: Math.min(0.99, prev.accuracy + Math.random() * 0.01),
+            score: Math.min(0.99, prev.score + Math.random() * 0.005),
+            context_efficiency: isContextAlgorithm 
+              ? Math.min(0.99, prev.context_efficiency + Math.random() * 0.02)
+              : prev.context_efficiency,
+            compression_ratio: isContextAlgorithm && prev.compression_ratio === 0
+              ? Math.random() * 0.7
+              : prev.compression_ratio
+          }
+        })
       }, 500)
     }
     return () => clearInterval(interval)
@@ -42,7 +55,9 @@ const InteractiveDemo: React.FC = () => {
       latency: 0.85,
       cost: 0.65,
       accuracy: 0.92,
-      score: 0.81
+      score: 0.81,
+      context_efficiency: 0.65,
+      compression_ratio: 0.0
     })
   }
 
@@ -56,8 +71,9 @@ const InteractiveDemo: React.FC = () => {
             Interactive Optimization Demo
           </h2>
           <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
-            Experience the optimization process in real-time. Watch how different algorithms 
-            explore the parameter space and improve performance across multiple objectives.
+            Experience the optimization process in real-time including context introspection. 
+            Watch how different algorithms explore the parameter space and improve performance 
+            across traditional and context-aware metrics.
           </p>
         </div>
 
@@ -146,6 +162,24 @@ const InteractiveDemo: React.FC = () => {
                   target={0.95}
                 />
                 <MetricBar
+                  label="Context Efficiency"
+                  value={metrics.context_efficiency}
+                  color="indigo"
+                  icon={Brain}
+                  unit="%"
+                  target={0.9}
+                />
+                {metrics.compression_ratio > 0 && (
+                  <MetricBar
+                    label="Compression Ratio"
+                    value={metrics.compression_ratio}
+                    color="emerald"
+                    icon={Search}
+                    unit="%"
+                    target={0.7}
+                  />
+                )}
+                <MetricBar
                   label="Overall Score"
                   value={metrics.score}
                   color="orange"
@@ -187,7 +221,10 @@ const InteractiveDemo: React.FC = () => {
             </div>
             <div className="text-center">
               <div className="text-3xl font-bold text-purple-600 mb-2">
-                {selectedAlgorithm === 'dspy' ? 'AI' : selectedAlgorithm === 'hillclimb' ? 'Gradient' : 'Exploration'}
+                {selectedAlgorithm === 'dspy' ? 'AI' : 
+                 selectedAlgorithm === 'context-aware' ? 'Self-Aware' :
+                 selectedAlgorithm === 'context-compression' ? 'Compression' :
+                 selectedAlgorithm === 'hillclimb' ? 'Gradient' : 'Exploration'}
               </div>
               <div className="text-sm text-slate-600">Strategy</div>
             </div>

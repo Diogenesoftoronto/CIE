@@ -198,6 +198,59 @@ class OptimizersPanel(Static):
         yield Label("Optimizers", id="opti_title")
         self.table = DataTable(id="opti_table")
         yield self.table
+
+## Recent Lessons / Tips
+
+### Capturing Screenshots Headlessly
+- `scripts/generate_tui_screenshots.py` uses Textual's `run_test(headless=True, size=(160, 48))` to render the TUI without a terminal.
+- The script takes SVG snapshots with `app.save_screenshot(...)` then optionally produces PNG/JPEG via CairoSVG/Pillow.
+- When updating the UI, rerun the script so `papers/assets/tui-main.svg` and `tui-context.svg` stay current.
+
+### Integrating External Metrics (W&B)
+- Added `cie.utils.wandb_import` to normalize `wandb/latest-run` contents (history JSONL + summary JSON) into CIE trial metrics.
+- `CIEBackend.ingest_wandb_run()` now consumes those rows, deduplicates by `wandb_row_id`, computes scores via configured weights, and rebuilds the Pareto frontier.
+- Experiments panel exposes a `Sync W&B` toolbar button + `Shift+S` binding, while the app has a global `Ctrl+Shift+W` action and palette command for importing.
+- Metadata from W&B runs (path, step, artifact id) is persisted on each `Trial.metadata` so repeats are skipped and downstream UI can surface provenance.
+
+#### BasePanel chrome & toolbars
+
+Recent work standardized every panel on `BasePanel`, which now provides:
+
+- **Subtitle + badge support**: `self.set_subtitle("...")`, `self.set_badge("DEMO", "info")`
+- **Header toolbars**: `self.add_toolbar_action("Run", self.action_run_eval, button_id="eval_run")`
+- **Status helpers**: `self.update_status("Refreshed", "info")`
+
+Panels such as `OptimizersPanel`, `EvalsPanel`, `ExperimentsPanel`, and the new `ContextPanel`
+all call these helpers in `on_mount()` to expose the most relevant actions as buttons instead of
+relying solely on key bindings.
+
+CSS additions:
+
+```css
+.panel-heading { width: 1fr; }
+.panel-subtitle { color: #9aa5b5; text-style: italic; }
+.panel-toolbar-button { margin-left: 1; background: #1e2329; }
+```
+
+These classes live in `cie/ui/theme.tcss` and keep the shared chrome consistent across the TUI.
+
+#### Context Panel & demo mode
+
+`ContextPanel` mounts a `ContextNavigator` widget directly inside the `[CTX]` tab (alongside the
+existing modal opened via `Ctrl+/`). It now supports two layouts:
+
+- **Full mode** (default): navigator renders its own header/buttons.
+- **Compact mode**: panel hides the navigator header and uses the BasePanel toolbar for actions.
+
+When the CLI is launched with `cie tui --demo`, the Context panel receives `demo_metadata` (for
+example, “LeetCode Practice Lab”) and:
+
+- Shows a “DEMO” badge and descriptive subtitle.
+- Preloads the suggestions TextArea with the demo context via `ContextNavigator.load_intro_text`.
+- Adds toolbar buttons (`Capture`, `Summary`, `Optimize`, `Export`) wired to `ContextNavigator`.
+
+The same metadata also updates the app title/subtitle + status banner so it’s obvious when the user
+is exploring a synthetic dataset.
         yield Label("", id="status")
 
     def on_mount(self) -> None:
@@ -320,6 +373,53 @@ def update_table(self, new_data: List[Any]) -> None:
     if self.table.row_count and self.selected_index is not None:
         if self.selected_index < self.table.row_count:
             self.table.cursor_coordinate = (self.selected_index, 0)
+```
+
+### 5. Sidebar Navigation & ContentSwitcher
+
+CIE moved from `TabbedContent` to a sidebar-based layout for better scalability and a "premium" feel (Harlequin-inspired).
+
+```python
+class CIEApp(App):
+    def compose(self) -> ComposeResult:
+        with Horizontal():
+            # Sidebar
+            with Vertical(id="sidebar"):
+                yield Label("CIE", id="sidebar-title")
+                yield ListView(
+                    ListItem(Label("Optimizers"), name="optimizers"),
+                    ListItem(Label("Evaluations"), name="evaluations"),
+                    id="sidebar-list"
+                )
+            
+            # Content Area
+            with Vertical(id="content-area"):
+                with ContentSwitcher(initial="optimizers"):
+                    yield OptimizersPanel(id="optimizers")
+                    yield EvalsPanel(id="evaluations")
+
+    def on_list_view_selected(self, event: ListView.Selected) -> None:
+        # Switch content based on sidebar selection
+        self.query_one(ContentSwitcher).current = event.item.name
+```
+
+### 6. Modal Result Handling
+
+Modals can return results to the caller, which is useful for refreshing data after a user action.
+
+```python
+# In Modal
+def _save(self):
+    # ... save logic ...
+    self.dismiss(True)  # Return True to indicate success
+
+# In Parent Widget
+def action_new_item(self):
+    def handle_result(result: bool):
+        if result:
+            self.refresh_table()
+            
+    self.app.push_screen(MyModal(), handle_result)
 ```
 
 ## Styling Patterns
@@ -612,10 +712,10 @@ async def test_complete_workflow():
 ### CIE-Specific Implementation Notes
 
 **Current Status**:
-- Uses Textual ≥0.47 API (older but stable)
-- Single-file architecture (`main.py` ≈650 lines)
-- Mock implementations ready for replacement
-- No test infrastructure yet
+- Uses Textual ≥0.47 API
+- Sidebar-based navigation with `ContentSwitcher`
+- Modular architecture (`cie/ui/panels/`, `cie/ui/modals.py`)
+- End-to-end tests available in `tests/test_end_to_end.py`
 
 **Key Patterns Used**:
 - **App Composition**: `compose()` method for widget setup

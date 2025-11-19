@@ -1,14 +1,14 @@
-"""Benchmark system for measuring agent capability on CIE codebase tasks.
+"""Context-aware benchmark system for CIE.
 
-This module provides a framework for testing how well AI agents can:
-- Navigate and understand the codebase
-- Read and comprehend code
-- Make targeted modifications
-- Debug and fix issues
-- Implement complete workflows
+The suite validates whether agents can:
+- Capture and reason about their working context
+- Apply compression/reorganization strategies
+- Measure context efficiency vs latency/cost guardrails
+- Automate end-to-end context workflows
 
-The benchmark system tracks metrics like task completion rate, tool call
-efficiency, error recovery, and code quality to measure agent performance.
+Traditional metrics (tool efficiency, code quality, autonomy) are still collected,
+but context-centric metrics (compression ratio, context size, guardrail hits) are
+now first-class citizens.
 """
 
 from benchmark.metrics import BenchmarkMetrics, MetricsCollector

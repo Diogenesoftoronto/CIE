@@ -37,10 +37,93 @@ const Algorithms: React.FC = () => {
         )`
     },
     {
+      id: 'context-aware',
+      name: 'Context-Aware Optimization',
+      icon: Brain,
+      color: 'indigo',
+      description: 'Advanced optimization that analyzes and optimizes based on context efficiency and structure',
+      features: [
+        'Real-time context analysis',
+        'Context efficiency scoring',
+        'Access pattern optimization',
+        'Adaptive context organization'
+      ],
+      pros: ['Self-optimizing capabilities', 'Context-aware decisions', 'Improved efficiency'],
+      cons: ['Complex implementation', 'Requires context data', 'Higher memory usage'],
+      code: `class ContextAwareOptimizer:
+    def propose(self, state: Dict[str, Any]) -> Policy:
+        # Analyze current context efficiency
+        context_analysis = self.context_tools.analyze_context()
+        efficiency_score = context_analysis['efficiency_score']
+        
+        # Include context insights in optimization
+        state['context_efficiency'] = efficiency_score
+        state['context_hotspots'] = context_analysis['hotspots']
+        
+        # Generate context-optimized policy
+        artifacts = self.generate_context_aware_policy(state)
+        
+        return Policy(
+            parameters=artifacts,
+            metadata={
+                'algorithm': 'context-aware',
+                'context_efficiency': efficiency_score,
+                'optimization_potential': context_analysis['optimization_potential']
+            }
+        )`
+    },
+    {
+      id: 'context-compression',
+      name: 'Context Compression',
+      icon: TrendingUp,
+      color: 'green',
+      description: 'Specialized optimizer focused on reducing context size while preserving essential information',
+      features: [
+        'Multi-strategy compression',
+        'Size reduction optimization',
+        'Information preservation',
+        'Adaptive threshold adjustment'
+      ],
+      pros: ['Reduced context size', 'Faster processing', 'Memory efficiency'],
+      cons: ['Potential information loss', 'Complex compression logic', 'Context-dependent results'],
+      code: `class ContextCompressionOptimizer:
+    def propose(self, state: Dict[str, Any]) -> Policy:
+        # Analyze current context structure
+        context_size = state.get('context_size', 0)
+        compression_threshold = state.get('threshold', 1000)
+        
+        # Test multiple compression strategies
+        strategies = ['frequency-based', 'type-based', 'hierarchical']
+        best_compression = None
+        best_ratio = 0.0
+        
+        for strategy in strategies:
+            compression = self.context_tools.compress_context(
+                strategy=strategy,
+                threshold=compression_threshold
+            )
+            if compression['compression_ratio'] > best_ratio:
+                best_ratio = compression['compression_ratio']
+                best_compression = compression
+        
+        return Policy(
+            parameters={
+                'compression_strategy': best_compression['strategy'],
+                'compression_ratio': best_ratio,
+                'preserved_paths': best_compression['preserved_paths']
+            },
+            metadata={
+                'algorithm': 'context-compression',
+                'original_size': context_size,
+                'compression_ratio': best_ratio
+            }
+        )`
+    },
+    {
       id: 'hillclimb',
       name: 'Hill Climbing',
       icon: TrendingUp,
-      color: 'green',
+      color: 'emerald',
       description: 'Gradient-based optimization with random restarts and adaptive step sizes',
       features: [
         'Random parameter exploration',
@@ -117,8 +200,9 @@ const Algorithms: React.FC = () => {
             Optimization Algorithms
           </h2>
           <p className="text-xl text-slate-600 max-w-3xl mx-auto leading-relaxed">
-            Three complementary optimization strategies, each designed for different scenarios and 
-            requirements. Choose the right algorithm based on your specific needs and constraints.
+            Advanced optimization strategies including context-aware algorithms that enable agents 
+            to understand and optimize their own operational context. Choose the right algorithm 
+            based on your specific needs and constraints.
           </p>
         </div>
 
@@ -228,6 +312,22 @@ const Algorithms: React.FC = () => {
                       <p>• Prompt optimization is critical for performance</p>
                       <p>• You need high-quality, automated solutions</p>
                       <p>• Budget allows for API costs</p>
+                    </>
+                  )}
+                  {selectedAlgorithm === 'context-aware' && (
+                    <>
+                      <p>• Agents need self-optimization capabilities</p>
+                      <p>• Context efficiency is a key metric</p>
+                      <p>• You want adaptive, learning behavior</p>
+                      <p>• Real-time context analysis is valuable</p>
+                    </>
+                  )}
+                  {selectedAlgorithm === 'context-compression' && (
+                    <>
+                      <p>• Context size reduction is critical</p>
+                      <p>• Memory and processing efficiency matter</p>
+                      <p>• You need to preserve essential information</p>
+                      <p>• Multiple compression strategies are beneficial</p>
                     </>
                   )}
                   {selectedAlgorithm === 'hillclimb' && (

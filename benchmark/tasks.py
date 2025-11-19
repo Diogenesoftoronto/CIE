@@ -23,14 +23,11 @@ class TaskDifficulty(Enum):
 class TaskCategory(Enum):
     """Task categories measuring different competencies."""
 
-    NAVIGATION = "navigation"  # Finding files and understanding structure
-    COMPREHENSION = "comprehension"  # Understanding code and design
-    MODIFICATION = "modification"  # Making targeted code changes
-    DEBUGGING = "debugging"  # Finding and fixing issues
-    IMPLEMENTATION = "implementation"  # Writing new code
-    WORKFLOW = "workflow"  # Multi-step complex tasks
-    TESTING = "testing"  # Writing and running tests
-    REFACTORING = "refactoring"  # Improving existing code
+    CONTEXT_AWARENESS = "context-awareness"  # Capture + summarize working memory
+    CONTEXT_OPTIMIZATION = "context-optimization"  # Reorganize / compress context trees
+    CONTEXT_PERFORMANCE = "context-performance"  # Measure effect on latency/cost
+    CONTEXT_AUTONOMY = "context-autonomy"  # Automate capture + adoption workflows
+    WORKFLOW = "workflow"  # Multi-step demo or CLI pipelines
 
 
 @dataclass
@@ -87,51 +84,52 @@ class BenchmarkTask:
 
 TASK_READ_FILE = BenchmarkTask(
     task_id="trivial_read_file",
-    title="Read and Summarize a File",
-    description="Read the core/models.py file and provide a summary of its contents.",
-    category=TaskCategory.NAVIGATION,
+    title="Capture a Context Snapshot",
+    description="Use the `[CTX]` panel or context tools modal to capture a snapshot focused on `core/models.py` and describe the resulting tree.",
+    category=TaskCategory.CONTEXT_AWARENESS,
     difficulty=TaskDifficulty.TRIVIAL,
-    objective="Read core/models.py and explain what dataclasses it defines and their purposes.",
+    objective="Capture context for `core/models.py`, list top-level nodes (Policy/Trial/Workload), and report node counts plus depth.",
     success_criteria=[
-        "Reads core/models.py successfully",
-        "Identifies Policy, Trial, and Workload dataclasses",
-        "Correctly describes their purposes",
+        "Invokes the Capture workflow and stores the snapshot",
+        "Reports node/leaf counts and the computed depth metric",
+        "Describes Policy, Trial, and Workload using information pulled from the snapshot rather than static file reads",
     ],
-    context="The CIE project has domain models defined in core/models.py",
-    estimated_time_minutes=2,
+    context="Demonstrates the baseline workflow for context introspection before any optimization occurs.",
+    estimated_time_minutes=3,
     max_tool_calls=5,
 )
 
 TASK_LIST_DIRECTORY = BenchmarkTask(
     task_id="trivial_list_directory",
-    title="List Project Structure",
-    description="List the contents of the CIE project root and describe its structure.",
-    category=TaskCategory.NAVIGATION,
+    title="Map Context Roots",
+    description="Enumerate the major directories that feed into context capture (core/, ui/, benchmark/) and tag them with expected context weight.",
+    category=TaskCategory.CONTEXT_AWARENESS,
     difficulty=TaskDifficulty.TRIVIAL,
-    objective="List the CIE directory and explain what each subdirectory contains.",
+    objective="List the project roots that typically enter the context window and note whether they contain models, UI definitions, or benchmarks.",
     success_criteria=[
-        "Lists CIE root directory successfully",
-        "Identifies core/, ui/, optimizers/, evaluators/ directories",
-        "Correctly describes their purposes",
+        "Lists the root directories and notes why they matter for context",
+        "Identifies at least three subdirectories with likely large contexts (ui/, benchmark/, scripts/)",
+        "Explains how each directory influences capture/compression decisions",
     ],
-    estimated_time_minutes=2,
+    context="Agents should know where large context segments originate before optimizing them.",
+    estimated_time_minutes=3,
     max_tool_calls=3,
 )
 
 TASK_FIND_PATTERN = BenchmarkTask(
     task_id="trivial_find_pattern",
-    title="Find Python Files",
-    description="Find all Python files in the CIE core module.",
-    category=TaskCategory.NAVIGATION,
+    title="Identify High-Churn Context Files",
+    description="Locate Python files under core/ or ui/ whose size suggests they should be compressed or summarized before entering context.",
+    category=TaskCategory.CONTEXT_AWARENESS,
     difficulty=TaskDifficulty.TRIVIAL,
-    objective="List all .py files in the core/ directory.",
+    objective="List candidate files (>200 lines) and capture size metadata used for later compression decisions.",
     success_criteria=[
-        "Uses find_path or similar to locate files",
-        "Lists all Python files in core/",
-        "Includes models.py, backend.py, __init__.py",
+        "Uses search tools to find large Python files",
+        "Reports approximate line counts or file sizes",
+        "Explains why each file may require compression or focused capture",
     ],
-    estimated_time_minutes=2,
-    max_tool_calls=5,
+    estimated_time_minutes=3,
+    max_tool_calls=6,
 )
 
 
@@ -142,51 +140,48 @@ TASK_FIND_PATTERN = BenchmarkTask(
 
 TASK_FIND_SYMBOL = BenchmarkTask(
     task_id="easy_find_symbol",
-    title="Find Symbol Usage",
-    description="Find all files that import or use the 'Policy' dataclass.",
-    category=TaskCategory.COMPREHENSION,
+    title="Trace Context Hotspots",
+    description="Locate every module that instantiates `ContextNavigator` or triggers context tooling so optimizers know where to focus.",
+    category=TaskCategory.CONTEXT_AWARENESS,
     difficulty=TaskDifficulty.EASY,
-    objective="Use grep to find all references to the Policy class throughout the codebase.",
+    objective="Use search utilities to find context-tool usage, then summarize how calls are distributed across panels, modals, and CLI helpers.",
     success_criteria=[
-        "Uses grep with proper regex",
-        "Finds at least 5 files using Policy",
-        "Includes core/backend.py and test files",
-        "Correctly interprets results",
+        "Runs grep/ripgrep queries that target ContextNavigator/context tools",
+        "Lists at least five call sites with file references",
+        "Explains how each call site contributes to capture or optimization workflows",
     ],
-    context="Policy is defined in core/models.py and used throughout the project.",
+    context="Before optimizing context, agents must know where the hooks live.",
     estimated_time_minutes=3,
     max_tool_calls=10,
 )
 
 TASK_UNDERSTAND_OPTIMIZER = BenchmarkTask(
     task_id="easy_understand_optimizer",
-    title="Understand Optimizer Interface",
-    description="Read and explain how the Optimizer protocol works in the codebase.",
-    category=TaskCategory.COMPREHENSION,
+    title="Understand Context-Aware Optimizers",
+    description="Explain how context metadata flows through the Optimizer protocol (propose/observe/state).",
+    category=TaskCategory.CONTEXT_OPTIMIZATION,
     difficulty=TaskDifficulty.EASY,
-    objective="Explain the Optimizer protocol: what methods it requires and what they do.",
+    objective="Describe how `state[\"context\"]` and metadata such as `context_efficiency` are passed to optimizers and how they should respond.",
     success_criteria=[
-        "Reads core/models.py or optimizers/",
-        "Identifies propose(), observe(), get_state(), reset() methods",
-        "Explains the purpose of each method",
-        "Describes the data flow between methods",
+        "Reads the Optimizer protocol definitions",
+        "Identifies how propose(), observe(), get_state(), reset() interact with context metrics",
+        "Suggests at least one strategy for adapting proposals based on context efficiency",
     ],
-    estimated_time_minutes=5,
+    estimated_time_minutes=6,
     max_tool_calls=10,
 )
 
 TASK_TRACE_IMPORTS = BenchmarkTask(
     task_id="easy_trace_imports",
-    title="Trace Import Dependencies",
-    description="Identify all imports in ui/app.py and explain what they import.",
-    category=TaskCategory.COMPREHENSION,
+    title="Trace Context Tool Integration",
+    description="Identify where context modals are imported/mounted and outline their lifecycle (capture, summary, optimize, export).",
+    category=TaskCategory.CONTEXT_AWARENESS,
     difficulty=TaskDifficulty.EASY,
-    objective="List all imports in ui/app.py and describe what module/class each one provides.",
+    objective="List the modules responsible for context capture/export and explain how they are triggered (key bindings, toolbar actions, CLI).",
     success_criteria=[
-        "Reads ui/app.py successfully",
-        "Lists at least 10 imports",
-        "Correctly identifies source modules for each import",
-        "Notes any internal vs external imports",
+        "Reads ui/app.py and related components successfully",
+        "Lists the key imports for ContextNavigator, ContextToolsModal, and related helpers",
+        "Explains the trigger path (key binding → action → modal) for each tool",
     ],
     estimated_time_minutes=5,
     max_tool_calls=8,
@@ -200,80 +195,78 @@ TASK_TRACE_IMPORTS = BenchmarkTask(
 
 TASK_LOCATE_BUG = BenchmarkTask(
     task_id="medium_locate_bug",
-    title="Find a Specific Issue",
-    description="Locate where in the code error handling happens for optimizer timeouts.",
-    category=TaskCategory.DEBUGGING,
+    title="Diagnose Context Drift",
+    description="Trace where context snapshots are invalidated or overwritten when optimizers run, and explain how drift is prevented.",
+    category=TaskCategory.CONTEXT_PERFORMANCE,
     difficulty=TaskDifficulty.MEDIUM,
-    objective="Find code that handles timeout errors from optimizers.",
+    objective="Find the backend logic that guards context snapshots (capture, reset, invalidate) and describe how it reacts when optimizers exceed limits.",
     success_criteria=[
-        "Searches through relevant files",
-        "Finds error handling code",
-        "Identifies timeout handling mechanism",
-        "Can explain how it works",
+        "Searches backend/optimizer integrations for context-handling code",
+        "Identifies guardrails that trigger when context exceeds limits or becomes stale",
+        "Explains how the mechanism prevents drift across propose/evaluate cycles",
     ],
-    context="Optimizers may time out; find where this is handled.",
-    estimated_time_minutes=5,
+    context="Self-aware agents must detect when their working memory diverges between optimization steps.",
+    estimated_time_minutes=6,
     max_tool_calls=15,
     hints=[
-        "Check backend.py and optimizer implementations",
-        "Look for try/except blocks or timeout-related code",
+        "Check backend.py around snapshot management",
+        "Inspect optimizer.observe for metadata handling",
     ],
 )
 
 TASK_EDIT_CONFIG = BenchmarkTask(
     task_id="medium_edit_config",
-    title="Update Configuration",
-    description="Add a new configuration parameter for evaluation timeout.",
-    category=TaskCategory.MODIFICATION,
+    title="Add Context Guard Configuration",
+    description="Extend the configuration to include `context_guard.max_nodes` and `context_guard.max_size_kb` so operators can tune when compression triggers.",
+    category=TaskCategory.CONTEXT_OPTIMIZATION,
     difficulty=TaskDifficulty.MEDIUM,
-    objective="Add 'eval_timeout_seconds' parameter to the configuration system.",
+    objective="Add the guard parameters to `config/settings.py`, wire them to defaults, and ensure they surface in the CLI/TUI metadata.",
     success_criteria=[
-        "Reads config/settings.py",
-        "Adds new parameter to appropriate dataclass",
-        "Updates default values",
-        "Code follows existing patterns",
-        "No syntax errors",
+        "Updates the relevant dataclass with the new guard values",
+        "Sets sensible defaults aligned with the paper (e.g., 60KB, 2k nodes)",
+        "Mirrors the settings into any CLI/TUI surfaces that display guard thresholds",
+        "Code follows existing patterns and passes linting",
     ],
-    estimated_time_minutes=5,
+    estimated_time_minutes=6,
     max_tool_calls=15,
 )
 
 TASK_ADD_METRIC = BenchmarkTask(
     task_id="medium_add_metric",
-    title="Add New Metric to Scoring",
-    description="Add 'memory_usage' as a new scorable metric in the Trial dataclass.",
-    category=TaskCategory.MODIFICATION,
+    title="Add Context Efficiency Metric",
+    description="Add `context_efficiency` to Trial metrics and ensure scoring + Pareto labels surface it.",
+    category=TaskCategory.CONTEXT_PERFORMANCE,
     difficulty=TaskDifficulty.MEDIUM,
-    objective="Add memory_usage to Trial.metrics and update scoring to support it.",
+    objective="Extend Trial.metrics with `context_efficiency`, update scoring to weigh it, and make sure the Experiments panel renders the value.",
     success_criteria=[
-        "Modifies Trial dataclass to include memory_usage",
-        "Updates scoring functions if needed",
-        "Changes follow project patterns",
+        "Modifies the Trial dataclass to include the metric",
+        "Updates CIEBackend.score and Pareto tagging to consider it",
+        "Verifies the UI/CLI display the metric without errors",
         "Existing tests still pass",
     ],
-    estimated_time_minutes=7,
+    estimated_time_minutes=8,
     max_tool_calls=20,
     hints=[
         "Check core/models.py for Trial structure",
-        "Look at how latency_p95 is used in scoring",
+        "Review how latency_p95 is used in scoring and mimic the wiring",
     ],
 )
 
 TASK_WRITE_SIMPLE_TEST = BenchmarkTask(
     task_id="medium_write_test",
-    title="Write a Unit Test",
-    description="Write a test for the Policy dataclass initialization and validation.",
-    category=TaskCategory.TESTING,
+    title="Test Context Compression",
+    description="Write a unit test that exercises the frequency-based compression strategy and asserts it improves efficiency.",
+    category=TaskCategory.CONTEXT_OPTIMIZATION,
     difficulty=TaskDifficulty.MEDIUM,
-    objective="Create test_policy_creation in tests/test_models.py that validates Policy creation.",
+    objective="Add a test (e.g., test_context_compression_frequency) that builds a fake tree, runs compression, and asserts node depth decreases.",
     success_criteria=[
-        "Creates test function with proper naming",
-        "Tests Policy instantiation with various parameters",
-        "Uses pytest assertions",
+        "Creates a deterministic context tree fixture",
+        "Applies the compression strategy under test",
+        "Asserts metrics like depth or size improved",
+        "Uses pytest assertions and follows project patterns",
         "Test passes when run",
-        "Follows project test patterns",
     ],
-    estimated_time_minutes=8,
+    estimated_time_minutes=9,
     max_tool_calls=20,
 )
 
@@ -285,32 +278,31 @@ TASK_WRITE_SIMPLE_TEST = BenchmarkTask(
 
 TASK_IMPLEMENT_FEATURE = BenchmarkTask(
     task_id="hard_implement_feature",
-    title="Implement New Evaluator",
-    description="Create a new evaluator called 'latency_tester' that measures response time.",
-    category=TaskCategory.IMPLEMENTATION,
+    title="Implement Context Efficiency Evaluator",
+    description="Create a `context_efficiency` evaluator plugin that measures compression ratio, access latency, and hotspot cache hit-rate.",
+    category=TaskCategory.CONTEXT_OPTIMIZATION,
     difficulty=TaskDifficulty.HARD,
     objective=(
-        "Create evaluators/latency_tester.py implementing the Evaluator protocol "
-        "with metrics for p50, p95, p99 latency."
+        "Create `evaluators/context_efficiency.py` implementing the Evaluator protocol "
+        "with metrics compression_ratio, context_size_kb, access_latency_mean."
     ),
     success_criteria=[
         "Implements Evaluator protocol completely",
-        "Includes run() method that returns Trial with latency metrics",
-        "get_supported_metrics() returns ['latency_p50', 'latency_p95', 'latency_p99']",
+        "Includes run() method that captures context stats and returns Trial metrics",
+        "get_supported_metrics() returns the context-oriented metrics",
         "validate_workload() checks required fields",
         "Registers in evaluators/__init__.py",
         "Code follows project patterns",
         "No import errors",
     ],
     context=(
-        "Evaluators implement the Evaluator protocol with run() and get_supported_metrics() methods. "
-        "See mock_evaluator.py or text_match.py for examples."
+        "Evaluators implement run() and get_supported_metrics(). Mirror existing plugins but focus on context instrumentation.",
     ),
     estimated_time_minutes=15,
     max_tool_calls=30,
     hints=[
-        "Review mock_evaluator.py for the basic structure",
-        "Look at text_match.py for a more complete example",
+        "Review mock_evaluator.py for baseline structure",
+        "Use ContextNavigator utilities to compute metrics",
         "Must implement run() -> Trial",
         "get_supported_metrics() should return list of metric names",
     ],
@@ -318,41 +310,40 @@ TASK_IMPLEMENT_FEATURE = BenchmarkTask(
 
 TASK_DEBUG_COMPLEX = BenchmarkTask(
     task_id="hard_debug_complex",
-    title="Debug Scoring Issue",
+    title="Debug Context Scoring Issue",
     description=(
-        "Fix an issue where negative metric weights don't properly reduce scores. "
-        "The scoring function should penalize when metrics are low, reward when high."
+        "Fix the scoring logic so context_efficiency and compression_ratio weights properly reward improvements "
+        "while still penalizing regressions."
     ),
-    category=TaskCategory.DEBUGGING,
+    category=TaskCategory.CONTEXT_PERFORMANCE,
     difficulty=TaskDifficulty.HARD,
-    objective="Locate and fix the scoring logic in backend.py to properly handle negative weights.",
+    objective="Locate and fix the score() method in backend.py so context metrics respect positive/negative weights and reflect guardrails.",
     success_criteria=[
         "Identifies the score() method in backend.py",
-        "Understands weight application (positive = penalize, negative = reward)",
-        "Fixes any logic errors",
-        "Writes test demonstrating the fix",
+        "Explains how context metrics should influence scores (penalties vs rewards)",
+        "Fixes the logic and writes a regression test covering context_efficiency",
         "Test passes",
     ],
-    context="The scoring system uses weights to combine multiple metrics into a single score.",
-    estimated_time_minutes=12,
+    context="Context-aware optimization relies on accurate scoring; this task ensures weights behave as described in the paper.",
+    estimated_time_minutes=13,
     max_tool_calls=25,
 )
 
 TASK_REFACTOR_MODULE = BenchmarkTask(
     task_id="hard_refactor_module",
-    title="Refactor for Clarity",
+    title="Refactor Context Optimizer",
     description=(
-        "Refactor the HillClimbOptimizer to extract the step-size adaptation logic "
-        "into a separate method for better testability."
+        "Refactor the HillClimbOptimizer so context-state handling is extracted into a helper "
+        "that can be reused by other optimizers."
     ),
-    category=TaskCategory.REFACTORING,
+    category=TaskCategory.CONTEXT_OPTIMIZATION,
     difficulty=TaskDifficulty.HARD,
-    objective="Extract step size adaptation into _adapt_step_size() method.",
+    objective="Extract context state preparation/filtering into `_prepare_context_state()` and ensure propose() uses it consistently.",
     success_criteria=[
         "Reads optimizers/hill_climb.py",
-        "Identifies step size adaptation logic",
-        "Creates new _adapt_step_size() method",
-        "Updates propose() to use new method",
+        "Identifies where context metadata is massaged before propose()",
+        "Creates `_prepare_context_state()` (or similar) with thorough docstring/tests",
+        "Updates propose() to call the helper",
         "All tests still pass",
         "Code is more readable",
     ],
@@ -368,60 +359,49 @@ TASK_REFACTOR_MODULE = BenchmarkTask(
 
 TASK_COMPLETE_WORKFLOW = BenchmarkTask(
     task_id="expert_complete_workflow",
-    title="Implement Complete Evaluator Plugin",
+    title="Ship a Context Optimization Workflow",
     description=(
-        "Create a complete 'performance' evaluator that measures CPU, memory, and latency. "
-        "Include registration, documentation, and tests."
+        "Create a complete context-optimization workflow that captures a snapshot, applies compression, runs the evaluator, and exports a report."
     ),
-    category=TaskCategory.WORKFLOW,
+    category=TaskCategory.CONTEXT_AUTONOMY,
     difficulty=TaskDifficulty.EXPERT,
     objective=(
-        "Implement evaluators/plugins/performance.py with CPU, memory, and latency metrics, "
-        "register it, add tests, and document it."
+        "Implement a CLI or script under `benchmark/templates/` that ties together capture → optimize → evaluate → export, "
+        "register it in docs, and add an integration test that exercises the workflow."
     ),
     success_criteria=[
-        "Creates evaluators/plugins/performance.py",
-        "Implements Evaluator protocol completely",
-        "Provides metrics: cpu_percent, memory_mb, latency_ms",
-        "Registers in evaluators/__init__.py or plugins/__init__.py",
-        "Includes comprehensive docstrings",
-        "Tests in tests/ directory validate all metrics",
-        "All tests pass",
-        "README or docs updated with new evaluator",
+        "Creates an executable workflow script/template",
+        "Orchestrates capture, compression strategy selection, and evaluation",
+        "Exports a structured report (JSON/Markdown) summarizing context efficiency gains",
+        "Adds documentation describing how to run the workflow",
+        "Adds tests validating the orchestration logic",
     ],
     context=(
-        "Evaluators are plugins that implement the Evaluator protocol. "
-        "See plugin system in evaluators/__init__.py for registration."
+        "The vision is end-to-end context-aware optimization; this task packages it into a reproducible workflow.",
     ),
     estimated_time_minutes=25,
     max_tool_calls=50,
     hints=[
-        "Review mock_evaluator.py for structure",
-        "Check evaluators/__init__.py for registration pattern",
-        "Plugin system allows drop-in evaluators",
-        "Include error handling and validation",
+        "Reuse CLI helpers from `benchmark/example_usage.py`",
+        "Leverage ContextNavigator APIs for capture/export",
     ],
 )
 
 TASK_ARCHITECTURE_CHANGE = BenchmarkTask(
     task_id="expert_architecture_change",
-    title="Architectural Improvement",
+    title="Architecture: Context Cache Layer",
     description=(
-        "Add support for caching Trial results to avoid recomputation. "
-        "Design and implement a caching layer in the backend."
+        "Add support for caching context snapshots and derived metrics so repeated optimizations reuse prior analysis safely."
     ),
-    category=TaskCategory.WORKFLOW,
+    category=TaskCategory.CONTEXT_AUTONOMY,
     difficulty=TaskDifficulty.EXPERT,
     objective=(
-        "Implement trial result caching in CIEBackend with configurable cache size "
-        "and TTL, including tests validating cache behavior."
+        "Implement a context cache in CIEBackend with configurable size/TTL, expose cache hits via metrics, and add tests validating eviction + reuse."
     ),
     success_criteria=[
         "Reads core/backend.py and understands current structure",
-        "Designs cache interface (get, set, invalidate)",
-        "Implements caching for trial results",
-        "Adds configuration for cache size and TTL",
-        "Includes cache hit/miss metrics",
+        "Designs cache interface (store snapshots + derived metrics)",
+        "Implements caching with size/TTL guards and metrics (hits/misses)",
         "Backward compatible (no breaking changes)",
         "Comprehensive tests verify caching behavior",
         "All existing tests still pass",
@@ -434,8 +414,8 @@ TASK_ARCHITECTURE_CHANGE = BenchmarkTask(
     estimated_time_minutes=30,
     max_tool_calls=60,
     hints=[
-        "Consider using functools.lru_cache or implementing custom cache",
-        "Cache key should include policy and workload identifiers",
+        "Consider leveraging functools.lru_cache or a custom ring buffer",
+        "Cache key should include workload + policy + compression strategy",
         "Add cache statistics for monitoring",
         "Make cache configurable via settings",
     ],
@@ -443,25 +423,22 @@ TASK_ARCHITECTURE_CHANGE = BenchmarkTask(
 
 TASK_CROSS_CUTTING_CONCERN = BenchmarkTask(
     task_id="expert_cross_cutting",
-    title="Add Cross-Cutting Concern",
+    title="Add Context Telemetry",
     description=(
-        "Implement comprehensive logging for all optimization and evaluation operations. "
-        "Create a logging system that tracks performance and errors without cluttering code."
+        "Implement structured telemetry for context capture/optimization so operators can monitor compression ratios, guardrail triggers, and Pareto shifts."
     ),
-    category=TaskCategory.WORKFLOW,
+    category=TaskCategory.CONTEXT_AUTONOMY,
     difficulty=TaskDifficulty.EXPERT,
     objective=(
-        "Add structured logging to backend.py, optimizers, and evaluators with "
-        "configurable levels and performance metrics."
+        "Add telemetry hooks (logging or metrics) across backend/optimizers to record context sizes, compression ratios, guardrail breaches, and publish them via the status panel.",
     ),
     success_criteria=[
-        "Creates utils/logging.py with logging infrastructure",
-        "Integrates logging into CIEBackend without polluting code",
-        "Logs key operations: policy generation, evaluation, adoption",
-        "Includes performance metrics (timing, call counts)",
+        "Creates a telemetry helper (utils/context_telemetry.py or similar)",
+        "Integrates telemetry into context capture, compression, and adoption paths",
+        "Surfaces metrics in the status panel or CLI output",
         "Error logging with context and stack traces",
-        "Configurable via settings (log level, format, output)",
-        "Tests verify logging behavior",
+        "Configurable via settings (on/off, sinks)",
+        "Tests verify telemetry is emitted for key events",
         "No breaking changes to existing code",
         "Documentation explains logging setup",
     ],
