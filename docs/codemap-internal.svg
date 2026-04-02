@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="2889" height="1699" viewBox="0 0 2889 1699" font-family="Inter, system-ui, sans-serif">
+  <defs>
+        <marker id="arrow-end" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto" markerUnits="strokeWidth">
+            <path d="M1,1 L6,4 L1,7 z" fill="context-stroke" />
+        </marker>
+        <marker id="arrow-start" markerWidth="8" markerHeight="8" refX="2" refY="4" orient="auto" markerUnits="strokeWidth">
+            <path d="M7,1 L2,4 L7,7 z" fill="context-stroke" />
+        </marker>
+  </defs>
+  <rect width="100%" height="100%" fill="white" />
+  <polyline points="1297.4,930.0 1234.3,1070.7 1280.1,1190.7 1325.8,1310.7 1434.8,1359.6" fill="none" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <line x1="1362.2" y1="930.0" x2="1597.0" y2="1039.6" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <line x1="1323.0" y1="130.0" x2="1240.7" y2="239.2" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <line x1="1407.5" y1="130.0" x2="1695.3" y2="239.6" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <line x1="1627.2" y1="770.0" x2="1368.5" y2="879.6" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <line x1="1682.6" y1="770.0" x2="1575.2" y2="1519.0" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <polyline points="1491.5,425.0 1463.5,425.0 244.0,425.0 244.0,557.0 244.0,559.0" fill="none" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <line x1="1470.3" y1="450.0" x2="1377.8" y2="559.2" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <polyline points="1491.5,425.0 1519.5,425.0 2565.8,425.0 2565.8,557.0 2565.8,559.0" fill="none" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <line x1="1440.5" y1="450.0" x2="1216.9" y2="559.6" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <polyline points="1491.5,425.0 1519.5,425.0 2382.2,425.0 2382.2,557.0 2382.2,559.0" fill="none" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <polyline points="1491.5,425.0 1463.5,425.0 580.9,425.0 580.9,557.0 580.9,559.0" fill="none" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <polyline points="1491.5,400.0 1491.5,351.0 404.7,351.0 404.7,559.0" fill="none" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <polyline points="1537.0,400.0 1668.8,327.6 1806.2,367.6 1943.6,407.6 2026.7,559.1" fill="none" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <polyline points="1491.5,425.0 1463.5,425.0 757.1,425.0 757.1,557.0 757.1,559.0" fill="none" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <line x1="1552.1" y1="450.0" x2="1818.0" y2="559.6" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <line x1="1421.5" y1="445.8" x2="1037.1" y2="559.7" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <line x1="1527.0" y1="450.0" x2="1682.5" y2="559.4" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <polyline points="1491.5,400.0 1491.5,351.0 2734.6,351.0 2734.6,559.0" fill="none" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <polyline points="1491.5,425.0 1519.5,425.0 2202.3,425.0 2202.3,557.0 2202.3,559.0" fill="none" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <line x1="1499.6" y1="450.0" x2="1534.9" y2="559.0" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <polyline points="255.1,610.0 435.9,1016.9 747.8,1136.9 1059.6,1256.9 1434.3,1090.4" fill="none" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <polyline points="244.0,610.0 244.0,979.0 1811.5,979.0 1811.5,931.0" fill="none" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <polyline points="244.0,610.0 244.0,1299.0 1491.5,1299.0 1491.5,1251.0" fill="none" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <polyline points="174.0,585.0 80.0,585.0 80.0,1385.0 1420.5,1385.0" fill="none" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <line x1="1352.3" y1="610.0" x2="1312.4" y2="879.0" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <polyline points="1356.0,610.0 1356.0,694.0 1846.2,694.0 1846.2,719.0" fill="none" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <polyline points="2565.8,610.0 2565.8,979.0 1308.6,979.0 1308.6,931.0" fill="none" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <polyline points="2565.8,610.0 2565.8,819.0 1156.0,819.0 1156.0,771.0" fill="none" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <polyline points="2549.9,610.0 2425.9,804.9 2246.0,844.9 2066.1,884.9 1886.3,770.5" fill="none" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <polyline points="2550.7,610.0 2295.1,1034.5 2116.8,1086.5 1938.5,1138.5 1519.8,930.4" fill="none" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <line x1="1204.8" y1="770.0" x2="1418.9" y2="879.5" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <line x1="1154.8" y1="770.0" x2="1149.8" y2="879.0" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <polyline points="1066.8,745.0 953.6,745.0 953.6,1065.0 1260.5,1065.0" fill="none" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <polyline points="1156.9,610.0 1111.7,748.9 1131.3,792.4 1150.8,835.9 1250.6,879.6" fill="none" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <polyline points="1254.2,585.0 2048.6,585.0 2048.6,745.0 1917.2,745.0" fill="none" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <polyline points="2368.7,610.0 2288.2,759.0 2154.2,799.0 2020.2,839.0 1893.4,770.5" fill="none" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <polyline points="2382.2,610.0 2382.2,1139.0 1491.5,1139.0 1491.5,1091.0" fill="none" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <polyline points="2369.3,610.0 2285.4,772.3 2153.6,846.2 2021.7,920.1 1905.4,911.7" fill="none" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <line x1="637.8" y1="610.0" x2="1250.8" y2="879.6" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <polyline points="580.9,610.0 580.9,819.0 1846.2,819.0 1846.2,771.0" fill="none" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <polyline points="416.6,610.0 550.7,891.0 776.7,971.0 1002.6,1051.0 1255.3,930.4" fill="none" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <polyline points="404.7,610.0 404.7,819.0 1526.2,819.0 1526.2,771.0" fill="none" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <polyline points="404.7,610.0 404.7,819.0 1846.2,819.0 1846.2,771.0" fill="none" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <polyline points="2040.9,610.0 2040.9,979.0 1308.6,979.0 1308.6,931.0" fill="none" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <line x1="2010.5" y1="610.0" x2="1877.4" y2="719.4" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <polyline points="757.1,610.0 757.1,979.0 1308.6,979.0 1308.6,931.0" fill="none" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <polyline points="757.1,610.0 757.1,819.0 1846.2,819.0 1846.2,771.0" fill="none" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <polyline points="951.8,610.0 951.8,979.0 1628.6,979.0 1628.6,931.0" fill="none" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <polyline points="947.5,610.0 885.9,968.7 998.4,1135.6 1111.0,1302.4 1420.5,1369.6" fill="none" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <polyline points="1788.8,585.0 1882.8,585.0 1882.8,905.0 1379.6,905.0" fill="none" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <line x1="1713.7" y1="610.0" x2="1691.5" y2="719.0" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <line x1="1661.3" y1="610.0" x2="1409.1" y2="719.6" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <line x1="1738.7" y1="610.0" x2="1825.7" y2="719.2" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <polyline points="2734.6,610.0 2734.6,1139.0 1491.5,1139.0 1491.5,1091.0" fill="none" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <polyline points="2722.5,610.0 2583.8,895.8 2353.1,975.8 2122.3,1055.8 1863.9,930.4" fill="none" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <polyline points="1843.6,770.0 1821.1,985.1 1777.0,1024.9 1732.9,1064.7 1562.5,1064.9" fill="none" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <line x1="1812.2" y1="770.0" x2="1663.4" y2="879.4" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <polyline points="1858.3,770.0 1868.8,791.8 1860.1,831.8 1851.4,871.8 1842.3,879.4" fill="none" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <polyline points="1471.2,265.0 1266.9,265.0 1266.9,1065.0 1420.5,1065.0" fill="none" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <line x1="1398.4" y1="290.0" x2="1473.7" y2="399.2" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <line x1="1764.5" y1="130.0" x2="1608.1" y2="239.4" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <line x1="1734.7" y1="130.0" x2="1447.6" y2="239.6" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <polyline points="2332.5,130.0 2332.5,339.0 1571.5,339.0 1571.5,291.0" fill="none" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <polyline points="2332.5,130.0 2332.5,339.0 1381.2,339.0 1381.2,291.0" fill="none" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <polyline points="620.9,130.0 620.9,339.0 1571.5,339.0 1571.5,291.0" fill="none" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <polyline points="620.9,130.0 620.9,339.0 1381.2,339.0 1381.2,291.0" fill="none" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <polyline points="2202.3,610.0 2202.3,979.0 1308.6,979.0 1308.6,931.0" fill="none" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <polyline points="2186.1,610.0 2114.3,721.0 2060.3,745.3 2006.3,769.5 1917.2,755.9" fill="none" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <line x1="1590.6" y1="610.0" x2="1798.0" y2="719.5" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <line x1="1177.2" y1="930.0" x2="1302.2" y2="1039.3" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <line x1="1356.5" y1="1090.0" x2="1465.8" y2="1199.3" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <polyline points="1471.5,1090.0 1459.5,1105.0 1459.5,1145.0 1459.5,1185.0 1470.9,1199.2" fill="none" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <polyline points="1466.5,1090.0 1411.5,1145.0 1411.5,1225.0 1411.5,1305.0 1465.8,1359.3" fill="none" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <line x1="1607.2" y1="930.0" x2="1513.6" y2="1039.2" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <polyline points="1511.5,1250.0 1523.5,1265.0 1523.5,1305.0 1523.5,1345.0 1512.1,1359.2" fill="none" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <line x1="1479.0" y1="1410.0" x2="1424.4" y2="1519.1" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <line x1="1504.0" y1="1410.0" x2="1558.6" y2="1519.1" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <polyline points="1651.5,1090.0 1651.5,1619.0 1411.5,1619.0 1411.5,1571.0" fill="none" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <polyline points="1100.1,130.0 927.1,444.6 956.8,566.9 986.6,689.2 1040.8,689.2 1040.8,905.0 1237.6,905.0" fill="none" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <polyline points="1103.0,130.0 968.3,439.4 1062.7,679.4 1157.1,919.4 1433.2,1039.6" fill="none" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <polyline points="991.4,105.0 308.0,105.0 308.0,1545.0 1500.5,1545.0" fill="none" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <line x1="925.8" y1="130.0" x2="1165.6" y2="239.6" stroke="#2d3748" stroke-width="2" marker-end="url(#arrow-end)" />
+  <rect x="491.0" y="80.0" width="259.8" height="50.0" rx="8" ry="8" fill="#fde68a" stroke="#2d3748" stroke-width="2" />
+  <text x="620.9" y="105.0" fill="#1a202c" font-size="14" text-anchor="middle" dominant-baseline="middle">TestCLI_HelpDoctorWorkloads</text>
+  <rect x="1151.2" y="240.0" width="140.0" height="50.0" rx="8" ry="8" fill="#fde68a" stroke="#2d3748" stroke-width="2" />
+  <text x="1221.2" y="265.0" fill="#1a202c" font-size="14" text-anchor="middle" dominant-baseline="middle">wordWrap</text>
+  <rect x="1066.8" y="720.0" width="178.4" height="50.0" rx="8" ry="8" fill="#fde68a" stroke="#2d3748" stroke-width="2" />
+  <text x="1156.0" y="745.0" fill="#1a202c" font-size="14" text-anchor="middle" dominant-baseline="middle">printTrialDetail</text>
+  <rect x="174.0" y="560.0" width="140.0" height="50.0" rx="8" ry="8" fill="#fde68a" stroke="#2d3748" stroke-width="2" />
+  <text x="244.0" y="585.0" fill="#1a202c" font-size="14" text-anchor="middle" dominant-baseline="middle">newInitCmd</text>
+  <rect x="334.0" y="560.0" width="141.4" height="50.0" rx="8" ry="8" fill="#fde68a" stroke="#2d3748" stroke-width="2" />
+  <text x="404.7" y="585.0" fill="#1a202c" font-size="14" text-anchor="middle" dominant-baseline="middle">newAdoptCmd</text>
+  <rect x="1265.2" y="720.0" width="171.0" height="50.0" rx="8" ry="8" fill="#fde68a" stroke="#2d3748" stroke-width="2" />
+  <text x="1350.7" y="745.0" fill="#1a202c" font-size="14" text-anchor="middle" dominant-baseline="middle">cloneCfgForDemo</text>
+  <rect x="495.4" y="560.0" width="171.0" height="50.0" rx="8" ry="8" fill="#fde68a" stroke="#2d3748" stroke-width="2" />
+  <text x="580.9" y="585.0" fill="#1a202c" font-size="14" text-anchor="middle" dominant-baseline="middle">newWorkloadsCmd</text>
+  <rect x="686.4" y="560.0" width="141.4" height="50.0" rx="8" ry="8" fill="#fde68a" stroke="#2d3748" stroke-width="2" />
+  <text x="757.1" y="585.0" fill="#1a202c" font-size="14" text-anchor="middle" dominant-baseline="middle">newResetCmd</text>
+  <rect x="847.8" y="560.0" width="208.0" height="50.0" rx="8" ry="8" fill="#fde68a" stroke="#2d3748" stroke-width="2" />
+  <text x="951.8" y="585.0" fill="#1a202c" font-size="14" text-anchor="middle" dominant-baseline="middle">newValidateConfigCmd</text>
+  <rect x="1075.8" y="560.0" width="178.4" height="50.0" rx="8" ry="8" fill="#fde68a" stroke="#2d3748" stroke-width="2" />
+  <text x="1165.0" y="585.0" fill="#1a202c" font-size="14" text-anchor="middle" dominant-baseline="middle">newOptimizersCmd</text>
+  <rect x="1078.6" y="880.0" width="140.0" height="50.0" rx="8" ry="8" fill="#fde68a" stroke="#2d3748" stroke-width="2" />
+  <text x="1148.6" y="905.0" fill="#1a202c" font-size="14" text-anchor="middle" dominant-baseline="middle">Trial</text>
+  <rect x="1421.5" y="1200.0" width="140.0" height="50.0" rx="8" ry="8" fill="#fde68a" stroke="#2d3748" stroke-width="2" />
+  <text x="1491.5" y="1225.0" fill="#1a202c" font-size="14" text-anchor="middle" dominant-baseline="middle">Config</text>
+  <rect x="1274.2" y="560.0" width="163.6" height="50.0" rx="8" ry="8" fill="#fde68a" stroke="#2d3748" stroke-width="2" />
+  <text x="1356.0" y="585.0" fill="#1a202c" font-size="14" text-anchor="middle" dominant-baseline="middle">newOptimizeCmd</text>
+  <rect x="1311.2" y="240.0" width="140.0" height="50.0" rx="8" ry="8" fill="#fde68a" stroke="#2d3748" stroke-width="2" />
+  <text x="1381.2" y="265.0" fill="#1a202c" font-size="14" text-anchor="middle" dominant-baseline="middle">runCLI</text>
+  <rect x="1457.8" y="560.0" width="171.0" height="50.0" rx="8" ry="8" fill="#fde68a" stroke="#2d3748" stroke-width="2" />
+  <text x="1543.3" y="585.0" fill="#1a202c" font-size="14" text-anchor="middle" dominant-baseline="middle">newBenchmarkCmd</text>
+  <rect x="1471.2" y="240.0" width="200.6" height="50.0" rx="8" ry="8" fill="#fde68a" stroke="#2d3748" stroke-width="2" />
+  <text x="1571.5" y="265.0" fill="#1a202c" font-size="14" text-anchor="middle" dominant-baseline="middle">writeTempJSONConfig</text>
+  <rect x="1341.5" y="1520.0" width="140.0" height="50.0" rx="8" ry="8" fill="#fde68a" stroke="#2d3748" stroke-width="2" />
+  <text x="1411.5" y="1545.0" fill="#1a202c" font-size="14" text-anchor="middle" dominant-baseline="middle">Panel</text>
+  <rect x="1648.8" y="560.0" width="140.0" height="50.0" rx="8" ry="8" fill="#fde68a" stroke="#2d3748" stroke-width="2" />
+  <text x="1718.8" y="585.0" fill="#1a202c" font-size="14" text-anchor="middle" dominant-baseline="middle">newTUICmd</text>
+  <rect x="1421.5" y="400.0" width="140.0" height="50.0" rx="8" ry="8" fill="#fde68a" stroke="#2d3748" stroke-width="2" />
+  <text x="1491.5" y="425.0" fill="#1a202c" font-size="14" text-anchor="middle" dominant-baseline="middle">NewRoot</text>
+  <rect x="770.8" y="80.0" width="200.6" height="50.0" rx="8" ry="8" fill="#fde68a" stroke="#2d3748" stroke-width="2" />
+  <text x="871.1" y="105.0" fill="#1a202c" font-size="14" text-anchor="middle" dominant-baseline="middle">contextToolsOverlay</text>
+  <rect x="1456.2" y="720.0" width="140.0" height="50.0" rx="8" ry="8" fill="#fde68a" stroke="#2d3748" stroke-width="2" />
+  <text x="1526.2" y="745.0" fill="#1a202c" font-size="14" text-anchor="middle" dominant-baseline="middle">Exit</text>
+  <rect x="1808.8" y="560.0" width="141.4" height="50.0" rx="8" ry="8" fill="#fde68a" stroke="#2d3748" stroke-width="2" />
+  <text x="1879.5" y="585.0" fill="#1a202c" font-size="14" text-anchor="middle" dominant-baseline="middle">newServeCmd</text>
+  <rect x="1261.5" y="1040.0" width="140.0" height="50.0" rx="8" ry="8" fill="#fde68a" stroke="#2d3748" stroke-width="2" />
+  <text x="1331.5" y="1065.0" fill="#1a202c" font-size="14" text-anchor="middle" dominant-baseline="middle">Workload</text>
+  <rect x="991.4" y="80.0" width="245.0" height="50.0" rx="8" ry="8" fill="#fde68a" stroke="#2d3748" stroke-width="2" />
+  <text x="1113.9" y="105.0" fill="#1a202c" font-size="14" text-anchor="middle" dominant-baseline="middle">TestSmoke_ProgramQuitsOnQ</text>
+  <rect x="1616.2" y="720.0" width="140.0" height="50.0" rx="8" ry="8" fill="#fde68a" stroke="#2d3748" stroke-width="2" />
+  <text x="1686.2" y="745.0" fill="#1a202c" font-size="14" text-anchor="middle" dominant-baseline="middle">RunTUI</text>
+  <rect x="1970.2" y="560.0" width="141.4" height="50.0" rx="8" ry="8" fill="#fde68a" stroke="#2d3748" stroke-width="2" />
+  <text x="2040.9" y="585.0" fill="#1a202c" font-size="14" text-anchor="middle" dominant-baseline="middle">newStatsCmd</text>
+  <rect x="1256.4" y="80.0" width="171.0" height="50.0" rx="8" ry="8" fill="#fde68a" stroke="#2d3748" stroke-width="2" />
+  <text x="1341.9" y="105.0" fill="#1a202c" font-size="14" text-anchor="middle" dominant-baseline="middle">placeholderCopy</text>
+  <rect x="2131.6" y="560.0" width="141.4" height="50.0" rx="8" ry="8" fill="#fde68a" stroke="#2d3748" stroke-width="2" />
+  <text x="2202.3" y="585.0" fill="#1a202c" font-size="14" text-anchor="middle" dominant-baseline="middle">newWandBCmd</text>
+  <rect x="1238.6" y="880.0" width="140.0" height="50.0" rx="8" ry="8" fill="#fde68a" stroke="#2d3748" stroke-width="2" />
+  <text x="1308.6" y="905.0" fill="#1a202c" font-size="14" text-anchor="middle" dominant-baseline="middle">New</text>
+  <rect x="1691.8" y="240.0" width="140.0" height="50.0" rx="8" ry="8" fill="#fde68a" stroke="#2d3748" stroke-width="2" />
+  <text x="1761.8" y="265.0" fill="#1a202c" font-size="14" text-anchor="middle" dominant-baseline="middle">Prompt</text>
+  <rect x="1501.5" y="1520.0" width="140.0" height="50.0" rx="8" ry="8" fill="#fde68a" stroke="#2d3748" stroke-width="2" />
+  <text x="1571.5" y="1545.0" fill="#1a202c" font-size="14" text-anchor="middle" dominant-baseline="middle">Options</text>
+  <rect x="1447.4" y="80.0" width="140.0" height="50.0" rx="8" ry="8" fill="#fde68a" stroke="#2d3748" stroke-width="2" />
+  <text x="1517.4" y="105.0" fill="#1a202c" font-size="14" text-anchor="middle" dominant-baseline="middle">expandHome</text>
+  <rect x="1776.2" y="720.0" width="140.0" height="50.0" rx="8" ry="8" fill="#fde68a" stroke="#2d3748" stroke-width="2" />
+  <text x="1846.2" y="745.0" fill="#1a202c" font-size="14" text-anchor="middle" dominant-baseline="middle">LoadConfig</text>
+  <rect x="1607.4" y="80.0" width="385.6" height="50.0" rx="8" ry="8" fill="#fde68a" stroke="#2d3748" stroke-width="2" />
+  <text x="1800.2" y="105.0" fill="#1a202c" font-size="14" text-anchor="middle" dominant-baseline="middle">TestProperty_CLI_OptimizeThenStatsTrialCount</text>
+  <rect x="2013.0" y="80.0" width="140.0" height="50.0" rx="8" ry="8" fill="#fde68a" stroke="#2d3748" stroke-width="2" />
+  <text x="2083.0" y="105.0" fill="#1a202c" font-size="14" text-anchor="middle" dominant-baseline="middle">clamp</text>
+  <rect x="2293.0" y="560.0" width="178.4" height="50.0" rx="8" ry="8" fill="#fde68a" stroke="#2d3748" stroke-width="2" />
+  <text x="2382.2" y="585.0" fill="#1a202c" font-size="14" text-anchor="middle" dominant-baseline="middle">newEvaluatorsCmd</text>
+  <rect x="1421.5" y="1360.0" width="140.0" height="50.0" rx="8" ry="8" fill="#fde68a" stroke="#2d3748" stroke-width="2" />
+  <text x="1491.5" y="1385.0" fill="#1a202c" font-size="14" text-anchor="middle" dominant-baseline="middle">Model</text>
+  <rect x="2491.4" y="560.0" width="148.8" height="50.0" rx="8" ry="8" fill="#fde68a" stroke="#2d3748" stroke-width="2" />
+  <text x="2565.8" y="585.0" fill="#1a202c" font-size="14" text-anchor="middle" dominant-baseline="middle">newTrialsCmd</text>
+  <rect x="2173.0" y="80.0" width="319.0" height="50.0" rx="8" ry="8" fill="#fde68a" stroke="#2d3748" stroke-width="2" />
+  <text x="2332.5" y="105.0" fill="#1a202c" font-size="14" text-anchor="middle" dominant-baseline="middle">TestProperty_CLI_TrialsListsAllRows</text>
+  <rect x="1398.6" y="880.0" width="140.0" height="50.0" rx="8" ry="8" fill="#fde68a" stroke="#2d3748" stroke-width="2" />
+  <text x="1468.6" y="905.0" fill="#1a202c" font-size="14" text-anchor="middle" dominant-baseline="middle">Policy</text>
+  <rect x="1558.6" y="880.0" width="140.0" height="50.0" rx="8" ry="8" fill="#fde68a" stroke="#2d3748" stroke-width="2" />
+  <text x="1628.6" y="905.0" fill="#1a202c" font-size="14" text-anchor="middle" dominant-baseline="middle">Load</text>
+  <rect x="1718.6" y="880.0" width="185.8" height="50.0" rx="8" ry="8" fill="#fde68a" stroke="#2d3748" stroke-width="2" />
+  <text x="1811.5" y="905.0" fill="#1a202c" font-size="14" text-anchor="middle" dominant-baseline="middle">DefaultConfigPath</text>
+  <rect x="2660.2" y="560.0" width="148.8" height="50.0" rx="8" ry="8" fill="#fde68a" stroke="#2d3748" stroke-width="2" />
+  <text x="2734.6" y="585.0" fill="#1a202c" font-size="14" text-anchor="middle" dominant-baseline="middle">newDoctorCmd</text>
+  <rect x="1421.5" y="1040.0" width="140.0" height="50.0" rx="8" ry="8" fill="#fde68a" stroke="#2d3748" stroke-width="2" />
+  <text x="1491.5" y="1065.0" fill="#1a202c" font-size="14" text-anchor="middle" dominant-baseline="middle">Default</text>
+  <rect x="1581.5" y="1040.0" width="140.0" height="50.0" rx="8" ry="8" fill="#fde68a" stroke="#2d3748" stroke-width="2" />
+  <text x="1651.5" y="1065.0" fill="#1a202c" font-size="14" text-anchor="middle" dominant-baseline="middle">panelItem</text>
+</svg>

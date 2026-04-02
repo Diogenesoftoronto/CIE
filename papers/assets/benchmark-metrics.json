@@ -1,0 +1,16 @@
+{
+  "run_id": "b44824d2",
+  "model_name": "CIE Demo",
+  "start_time": "2025-11-14T19:04:08.954221",
+  "end_time": "2025-11-14T19:04:08.954699",
+  "total_duration_seconds": 0.000478,
+  "tasks_completed": 16,
+  "tasks_passed": 6,
+  "pass_rate": 37.5,
+  "average_tool_efficiency": 0.0,
+  "average_code_quality": 43.75,
+  "average_autonomy": 81.25,
+  "total_tool_calls": 0,
+  "total_errors": 30,
+  "average_composite_score": 57.8125
+}

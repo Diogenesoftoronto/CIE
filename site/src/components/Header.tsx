@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { ChevronDown, Menu, X, Github, BookOpen } from 'lucide-react'
+import { Menu, X, Github, BookOpen } from 'lucide-react'
 
 const Header: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false)

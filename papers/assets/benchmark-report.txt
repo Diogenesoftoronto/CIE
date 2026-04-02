@@ -1,0 +1,119 @@
+================================================================================
+BENCHMARK REPORT
+================================================================================
+
+Run ID: b44824d2
+Model: CIE Demo
+Timestamp: 2025-11-14T19:04:08.954592
+
+SUMMARY
+--------------------------------------------------------------------------------
+Total Tasks: 16
+Passed: 6/16 (37.5%)
+Failed: 10/16 (62.5%)
+
+BY DIFFICULTY
+--------------------------------------------------------------------------------
+  trivial     3/ 3 (100.0%)
+  easy        3/ 3 (100.0%)
+  medium      0/ 4 (  0.0%)
+  hard        0/ 3 (  0.0%)
+  expert      0/ 3 (  0.0%)
+
+BY CATEGORY
+--------------------------------------------------------------------------------
+  comprehension         3/ 3 (100.0%)
+  debugging             0/ 2 (  0.0%)
+  implementation        0/ 1 (  0.0%)
+  modification          0/ 2 (  0.0%)
+  navigation            3/ 3 (100.0%)
+  refactoring           0/ 1 (  0.0%)
+  testing               0/ 1 (  0.0%)
+  workflow              0/ 3 (  0.0%)
+
+DETAILED RESULTS
+--------------------------------------------------------------------------------
+✓ PASS | trivial_read_file
+      Read and Summarize a File
+      Duration: 0.0s | Attempts: 1 | Errors: 0
+
+✓ PASS | trivial_list_directory
+      List Project Structure
+      Duration: 0.0s | Attempts: 1 | Errors: 0
+
+✓ PASS | trivial_find_pattern
+      Find Python Files
+      Duration: 0.0s | Attempts: 1 | Errors: 0
+
+✓ PASS | easy_find_symbol
+      Find Symbol Usage
+      Duration: 0.0s | Attempts: 1 | Errors: 0
+
+✓ PASS | easy_understand_optimizer
+      Understand Optimizer Interface
+      Duration: 0.0s | Attempts: 1 | Errors: 0
+
+✓ PASS | easy_trace_imports
+      Trace Import Dependencies
+      Duration: 0.0s | Attempts: 1 | Errors: 0
+
+✗ FAIL | medium_locate_bug
+      Find a Specific Issue
+      Duration: 0.0s | Attempts: 3 | Errors: 3
+      Errors: Mock execution error; Mock execution error
+
+✗ FAIL | medium_edit_config
+      Update Configuration
+      Duration: 0.0s | Attempts: 3 | Errors: 3
+      Errors: Mock execution error; Mock execution error
+
+✗ FAIL | medium_add_metric
+      Add New Metric to Scoring
+      Duration: 0.0s | Attempts: 3 | Errors: 3
+      Errors: Mock execution error; Mock execution error
+
+✗ FAIL | medium_write_test
+      Write a Unit Test
+      Duration: 0.0s | Attempts: 3 | Errors: 3
+      Errors: Mock execution error; Mock execution error
+
+✗ FAIL | hard_implement_feature
+      Implement New Evaluator
+      Duration: 0.0s | Attempts: 3 | Errors: 3
+      Errors: Mock execution error; Mock execution error
+
+✗ FAIL | hard_debug_complex
+      Debug Scoring Issue
+      Duration: 0.0s | Attempts: 3 | Errors: 3
+      Errors: Mock execution error; Mock execution error
+
+✗ FAIL | hard_refactor_module
+      Refactor for Clarity
+      Duration: 0.0s | Attempts: 3 | Errors: 3
+      Errors: Mock execution error; Mock execution error
+
+✗ FAIL | expert_complete_workflow
+      Implement Complete Evaluator Plugin
+      Duration: 0.0s | Attempts: 3 | Errors: 3
+      Errors: Mock execution error; Mock execution error
+
+✗ FAIL | expert_architecture_change
+      Architectural Improvement
+      Duration: 0.0s | Attempts: 3 | Errors: 3
+      Errors: Mock execution error; Mock execution error
+
+✗ FAIL | expert_cross_cutting
+      Add Cross-Cutting Concern
+      Duration: 0.0s | Attempts: 3 | Errors: 3
+      Errors: Mock execution error; Mock execution error
+
+METRICS SUMMARY
+--------------------------------------------------------------------------------
+Total Tool Calls: 0
+Total Errors: 30
+Average Tool Efficiency: 0.0%
+Average Code Quality: 43.8/100
+Average Autonomy: 81.2/100
+Average Composite Score: 57.8/100
+
+================================================================================

@@ -1,5 +1,5 @@
 import React from 'react'
-import { ArrowRight, Zap, Target, BarChart3 } from 'lucide-react'
+import { ArrowRight, Zap, Target, BarChart3, Brain } from 'lucide-react'
 
 const Introduction: React.FC = () => {
   return (
@@ -16,7 +16,7 @@ const Introduction: React.FC = () => {
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8 mb-16">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 mb-16">
           <div className="distill-card rounded-xl p-8 distill-hover">
             <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center mb-6">
               <Zap className="w-6 h-6 text-blue-600" />
@@ -49,43 +49,62 @@ const Introduction: React.FC = () => {
               and detailed performance analysis across different workloads.
             </p>
           </div>
+
+          <div className="distill-card rounded-xl p-8 distill-hover">
+            <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center mb-6">
+              <Brain className="w-6 h-6 text-indigo-600" />
+            </div>
+            <h3 className="text-xl font-semibold text-slate-900 mb-4">Context Introspection</h3>
+            <p className="text-slate-600 leading-relaxed">
+              Advanced context analysis and manipulation tools that enable agents to understand 
+              and optimize their own operational context in real-time.
+            </p>
+          </div>
         </div>
 
         {/* Problem Statement */}
         <div className="bg-slate-50 rounded-2xl p-8 md:p-12">
-          <h3 className="text-2xl font-semibold text-slate-900 mb-6">The Optimization Problem</h3>
+          <h3 className="text-2xl font-semibold text-slate-900 mb-6">The Context Introspection Challenge</h3>
           <div className="grid md:grid-cols-2 gap-8">
             <div>
-              <h4 className="text-lg font-medium text-slate-800 mb-4">Traditional Approaches</h4>
+              <h4 className="text-lg font-medium text-slate-800 mb-4">Traditional Agent Limitations</h4>
               <ul className="space-y-3 text-slate-600">
                 <li className="flex items-start space-x-3">
                   <ArrowRight className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
-                  <span>Single-objective optimization ignores trade-offs</span>
+                  <span>Agents operate as passive responders without self-awareness</span>
                 </li>
                 <li className="flex items-start space-x-3">
                   <ArrowRight className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
-                  <span>Manual parameter tuning is time-consuming</span>
+                  <span>No visibility into context usage, tools, or system resources</span>
                 </li>
                 <li className="flex items-start space-x-3">
                   <ArrowRight className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
-                  <span>Limited visibility into optimization process</span>
+                  <span>Manual optimization without introspective capabilities</span>
+                </li>
+                <li className="flex items-start space-x-3">
+                  <ArrowRight className="w-5 h-5 text-red-500 mt-0.5 flex-shrink-0" />
+                  <span>Limited ability to adapt and optimize their own behavior</span>
                 </li>
               </ul>
             </div>
             <div>
-              <h4 className="text-lg font-medium text-slate-800 mb-4">Our Solution</h4>
+              <h4 className="text-lg font-medium text-slate-800 mb-4">CIE's Introspective Solution</h4>
               <ul className="space-y-3 text-slate-600">
                 <li className="flex items-start space-x-3">
                   <ArrowRight className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
-                  <span>Multi-dimensional scoring with customizable weights</span>
+                  <span>Real-time context analysis and window usage monitoring</span>
                 </li>
                 <li className="flex items-start space-x-3">
                   <ArrowRight className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
-                  <span>Automated optimization with AI-powered algorithms</span>
+                  <span>Self-optimizing agents with metacognitive capabilities</span>
                 </li>
                 <li className="flex items-start space-x-3">
                   <ArrowRight className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
-                  <span>Interactive visualization and real-time feedback</span>
+                  <span>Automated context compression and organization</span>
+                </li>
+                <li className="flex items-start space-x-3">
+                  <ArrowRight className="w-5 h-5 text-green-500 mt-0.5 flex-shrink-0" />
+                  <span>Interactive dashboard for human-agent collaboration</span>
                 </li>
               </ul>
             </div>
