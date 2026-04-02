@@ -1,0 +1,119 @@
+# CIE — run `mise install` then `mise run` to pick a task, or `mise run <task>`.
+# https://mise.jdx.dev/
+
+[tools]
+go = "1.25.7"
+node = "22"
+
+[tasks.setup]
+description = "Download Go modules (run mise install first for Go/Node pins)"
+run = "go mod download"
+
+[tasks.build]
+description = "Build cie binary → ./cie"
+alias = "b"
+run = "go build -o cie ./cmd/cie"
+
+[tasks.install]
+description = "Install cie to $GOPATH/bin or $GOBIN"
+run = "go install ./cmd/cie"
+
+[tasks.test]
+description = "Run all Go tests"
+alias = "t"
+run = "go test ./... -count=1"
+
+[tasks.vet]
+description = "go vet all packages"
+run = "go vet ./..."
+
+[tasks.fmt]
+description = "Format all Go packages"
+run = "go fmt ./..."
+
+[tasks.ci]
+description = "CI-style checks (vet, test, build)"
+depends = ["vet", "test", "build"]
+
+[tasks.doctor]
+description = "Run cie doctor (env sanity check)"
+run = "go run ./cmd/cie doctor"
+
+[tasks.init-config]
+description = "Create ~/.cie JSON layout (storage + experiments dir)"
+run = 'go run ./cmd/cie init --storage json --experiments-dir ~/.cie/experiments'
+
+[tasks.tui]
+description = "Launch the TUI"
+run = "go run ./cmd/cie tui"
+
+[tasks.demo]
+description = "Launch TUI in demo mode"
+run = "go run ./cmd/cie tui --demo"
+
+[tasks.benchmark]
+description = "Run benchmark harness (stub executor)"
+run = "go run ./cmd/cie benchmark run"
+
+[tasks."benchmark:genai"]
+description = "Benchmark with maruel/genai (needs API keys / config)"
+run = "go run ./cmd/cie benchmark run --executor genai"
+
+[tasks.clean]
+description = "Remove locally built ./cie binary"
+run = "rm -f cie"
+
+[tasks."site:install"]
+description = "Install site/ npm dependencies"
+dir = "site"
+run = "npm install"
+
+[tasks."site:dev"]
+description = "Vite dev server for site/"
+dir = "site"
+run = "npm run dev"
+
+[tasks."site:build"]
+description = "Production build of site/"
+dir = "site"
+run = "npm run build"
+
+[tasks."site:lint"]
+description = "ESLint for site/"
+dir = "site"
+run = "npm run lint"
+
+[tasks.docker-build]
+description = "Build OCI image (docker build -t cie .)"
+run = "docker build -t cie ."
+
+# Docs: requires `oxdraw` on PATH (e.g. `cargo install oxdraw` or mise cargo backend).
+# Optional: Charm `skate` for `docs:codedown` — store key as `skate set minimax@secrets …`.
+
+[tasks."docs:diagram"]
+description = "Regenerate docs/codemap-internal.mmd + .svg (oxdraw, no AI)"
+run = [
+  "oxdraw --code-map internal --no-ai --max-nodes 45 -o docs/codemap-internal.mmd",
+  "oxdraw -i docs/codemap-internal.mmd -o docs/codemap-internal.svg",
+]
+
+[tasks."docs:codedown"]
+description = "AI codedown → docs/CODEDOWN-ai.md (MiniMax M2.7, key: skate get minimax@secrets or OXDRAW_API_KEY)"
+run = '''
+#!/usr/bin/env bash
+set -euo pipefail
+KEY="${OXDRAW_API_KEY:-$(skate get minimax@secrets)}"
+exec oxdraw --codedown . --codedown-style architecture \
+  --api-key "$KEY" --model "MiniMax-M2.7" --api-url "https://api.minimax.io/v1" \
+  -o docs/CODEDOWN-ai.md
+'''
+
+[tasks."docs:augment-readme"]
+description = "oxdraw augment-markdown README.md (MiniMax; review diff before commit)"
+run = '''
+#!/usr/bin/env bash
+set -euo pipefail
+KEY="${OXDRAW_API_KEY:-$(skate get minimax@secrets)}"
+exec oxdraw --augment-markdown README.md --repo-path . \
+  --api-key "$KEY" --model "MiniMax-M2.7" --api-url "https://api.minimax.io/v1"
+'''

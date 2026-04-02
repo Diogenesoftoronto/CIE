@@ -1,0 +1,176 @@
+graph TD
+    node_33[TestCLI_HelpDoctorWorkloads]
+    node_2[wordWrap]
+    node_16[printTrialDetail]
+    node_13[newInitCmd]
+    node_20[newAdoptCmd]
+    node_26[cloneCfgForDemo]
+    node_19[newWorkloadsCmd]
+    node_22[newResetCmd]
+    node_24[newValidateConfigCmd]
+    node_17[newOptimizersCmd]
+    node_37[Trial]
+    node_44[Config]
+    node_14[newOptimizeCmd]
+    node_30[runCLI]
+    node_35[newBenchmarkCmd]
+    node_29[writeTempJSONConfig]
+    node_4[Panel]
+    node_25[newTUICmd]
+    node_12[NewRoot]
+    node_9[contextToolsOverlay]
+    node_10[Exit]
+    node_23[newServeCmd]
+    node_38[Workload]
+    node_8[TestSmoke_ProgramQuitsOnQ]
+    node_11[RunTUI]
+    node_21[newStatsCmd]
+    node_1[placeholderCopy]
+    node_34[newWandBCmd]
+    node_0[New]
+    node_39[Prompt]
+    node_5[Options]
+    node_41[expandHome]
+    node_28[LoadConfig]
+    node_31[TestProperty_CLI_OptimizeThenStatsTrialCount]
+    node_3[clamp]
+    node_18[newEvaluatorsCmd]
+    node_6[Model]
+    node_15[newTrialsCmd]
+    node_32[TestProperty_CLI_TrialsListsAllRows]
+    node_36[Policy]
+    node_42[Load]
+    node_43[DefaultConfigPath]
+    node_27[newDoctorCmd]
+    node_40[Default]
+    node_7[panelItem]
+    node_0 --> node_6
+    node_0 --> node_7
+    node_1 --> node_2
+    node_1 --> node_39
+    node_11 --> node_0
+    node_11 --> node_5
+    node_12 --> node_13
+    node_12 --> node_14
+    node_12 --> node_15
+    node_12 --> node_17
+    node_12 --> node_18
+    node_12 --> node_19
+    node_12 --> node_20
+    node_12 --> node_21
+    node_12 --> node_22
+    node_12 --> node_23
+    node_12 --> node_24
+    node_12 --> node_25
+    node_12 --> node_27
+    node_12 --> node_34
+    node_12 --> node_35
+    node_13 --> node_40
+    node_13 --> node_43
+    node_13 --> node_44
+    node_13 --> node_6
+    node_14 --> node_0
+    node_14 --> node_28
+    node_15 --> node_0
+    node_15 --> node_16
+    node_15 --> node_28
+    node_15 --> node_36
+    node_16 --> node_36
+    node_16 --> node_37
+    node_16 --> node_38
+    node_17 --> node_0
+    node_17 --> node_28
+    node_18 --> node_28
+    node_18 --> node_40
+    node_18 --> node_43
+    node_19 --> node_0
+    node_19 --> node_28
+    node_20 --> node_0
+    node_20 --> node_10
+    node_20 --> node_28
+    node_21 --> node_0
+    node_21 --> node_28
+    node_22 --> node_0
+    node_22 --> node_28
+    node_24 --> node_42
+    node_24 --> node_6
+    node_25 --> node_0
+    node_25 --> node_11
+    node_25 --> node_26
+    node_25 --> node_28
+    node_27 --> node_40
+    node_27 --> node_43
+    node_28 --> node_40
+    node_28 --> node_42
+    node_28 --> node_43
+    node_29 --> node_40
+    node_30 --> node_12
+    node_31 --> node_29
+    node_31 --> node_30
+    node_32 --> node_29
+    node_32 --> node_30
+    node_33 --> node_29
+    node_33 --> node_30
+    node_34 --> node_0
+    node_34 --> node_28
+    node_35 --> node_28
+    node_37 --> node_38
+    node_38 --> node_44
+    node_40 --> node_44
+    node_40 --> node_6
+    node_42 --> node_40
+    node_44 --> node_6
+    node_6 --> node_4
+    node_6 --> node_5
+    node_7 --> node_4
+    node_8 --> node_0
+    node_8 --> node_40
+    node_8 --> node_5
+    node_9 --> node_2
+
+%% OXDRAW CODE node_33 cli/property_e2e_test.go line:105-128 def:TestCLI_HelpDoctorWorkloads
+%% OXDRAW CODE node_2 tui/model.go line:315-339 def:wordWrap
+%% OXDRAW CODE node_16 cli/root.go line:220-231 def:printTrialDetail
+%% OXDRAW CODE node_13 cli/root.go line:52-91 def:newInitCmd
+%% OXDRAW CODE node_20 cli/root.go line:335-364 def:newAdoptCmd
+%% OXDRAW CODE node_26 cli/root.go line:498-504 def:cloneCfgForDemo
+%% OXDRAW CODE node_19 cli/root.go line:305-333 def:newWorkloadsCmd
+%% OXDRAW CODE node_22 cli/root.go line:400-431 def:newResetCmd
+%% OXDRAW CODE node_24 cli/root.go line:448-466 def:newValidateConfigCmd
+%% OXDRAW CODE node_17 cli/root.go line:233-264 def:newOptimizersCmd
+%% OXDRAW CODE node_37 core/types.go line:18-28 def:Trial
+%% OXDRAW CODE node_44 config/config.go line:11-18 def:Config
+%% OXDRAW CODE node_14 cli/root.go line:93-152 def:newOptimizeCmd
+%% OXDRAW CODE node_30 cli/property_e2e_test.go line:31-40 def:runCLI
+%% OXDRAW CODE node_35 cli/extras.go line:55-118 def:newBenchmarkCmd
+%% OXDRAW CODE node_29 cli/property_e2e_test.go line:17-29 def:writeTempJSONConfig
+%% OXDRAW CODE node_4 tui/model.go line:16-34 def:Panel
+%% OXDRAW CODE node_25 cli/root.go line:468-496 def:newTUICmd
+%% OXDRAW CODE node_12 cli/root.go line:21-50 def:NewRoot
+%% OXDRAW CODE node_9 tui/context_overlay.go line:13-59 def:contextToolsOverlay
+%% OXDRAW CODE node_10 cli/tui.go line:15-20 def:Exit
+%% OXDRAW CODE node_23 cli/root.go line:433-446 def:newServeCmd
+%% OXDRAW CODE node_38 core/types.go line:31-37 def:Workload
+%% OXDRAW CODE node_8 tui/smoke_test.go line:14-37 def:TestSmoke_ProgramQuitsOnQ
+%% OXDRAW CODE node_11 cli/tui.go line:23-35 def:RunTUI
+%% OXDRAW CODE node_21 cli/root.go line:366-398 def:newStatsCmd
+%% OXDRAW CODE node_1 tui/model.go line:261-313 def:placeholderCopy
+%% OXDRAW CODE node_34 cli/extras.go line:16-53 def:newWandBCmd
+%% OXDRAW CODE node_0 tui/model.go line:71-96 def:New
+%% OXDRAW CODE node_39 core/types.go line:40-48 def:Prompt
+%% OXDRAW CODE node_5 tui/model.go line:46-51 def:Options
+%% OXDRAW CODE node_41 config/config.go line:106-115 def:expandHome
+%% OXDRAW CODE node_28 cli/config_loader.go line:13-33 def:LoadConfig
+%% OXDRAW CODE node_31 cli/property_e2e_test.go line:42-72 def:TestProperty_CLI_OptimizeThenStatsTrialCount
+%% OXDRAW CODE node_3 tui/model.go line:341-349 def:clamp
+%% OXDRAW CODE node_18 cli/root.go line:266-303 def:newEvaluatorsCmd
+%% OXDRAW CODE node_6 tui/model.go line:54-68 def:Model
+%% OXDRAW CODE node_15 cli/root.go line:154-218 def:newTrialsCmd
+%% OXDRAW CODE node_32 cli/property_e2e_test.go line:76-103 def:TestProperty_CLI_TrialsListsAllRows
+%% OXDRAW CODE node_36 core/types.go line:9-15 def:Policy
+%% OXDRAW CODE node_42 config/config.go line:118-129 def:Load
+%% OXDRAW CODE node_43 config/config.go line:146-152 def:DefaultConfigPath
+%% OXDRAW CODE node_27 cli/root.go line:506-517 def:newDoctorCmd
+%% OXDRAW CODE node_40 config/config.go line:60-98 def:Default
+%% OXDRAW CODE node_7 tui/model.go line:98-100 def:panelItem
+%% OXDRAW META path:internal commit:fe182951c3450843edebc18f0cf466b74ef68620 diff_hash:18334171684202703378

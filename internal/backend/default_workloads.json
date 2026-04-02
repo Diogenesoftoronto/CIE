@@ -1,0 +1,54 @@
+[
+  {
+    "name": "MicroEval:basic",
+    "items": 50,
+    "description": "Basic micro evaluation workload"
+  },
+  {
+    "name": "MacroEval:rag-xl",
+    "items": 10,
+    "description": "Large RAG evaluation workload"
+  },
+  {
+    "name": "SyntheticLoad:cpu80",
+    "items": 1,
+    "description": "Synthetic CPU load at 80%"
+  },
+  {
+    "name": "TextEval:qa-lite",
+    "items": 3,
+    "description": "Reference QA cases scored with similarity metrics",
+    "config": { "dataset": "text" }
+  },
+  {
+    "name": "TextEval:classify",
+    "items": 4,
+    "description": "Sentiment and extraction tasks with Levenshtein scoring",
+    "config": {
+      "dataset": "text",
+      "cases": [
+        {
+          "task": "Sentiment",
+          "prompt": "Classify the sentiment as positive or negative: 'The launch was chaotic, but users love the final product.'",
+          "reference": "positive",
+          "guidance": "Reply with 'positive' or 'negative'."
+        },
+        {
+          "task": "Short answer",
+          "prompt": "Which latency metric tracks the 95th percentile?",
+          "reference": "latency_p95"
+        },
+        {
+          "task": "Keyword extraction",
+          "prompt": "Extract the primary KPI mentioned here: 'Lower cost per request without reducing success rate.'",
+          "reference": "cost per request"
+        },
+        {
+          "task": "Summarization",
+          "prompt": "Summarize in under 12 words: 'Braintrust relies on human-in-the-loop evaluation flows.'",
+          "reference": "Braintrust uses human-in-the-loop evaluation."
+        }
+      ]
+    }
+  }
+]
